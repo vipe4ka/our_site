@@ -1,0 +1,117 @@
+@font-face {
+  font-family: "Myraid-pro";
+  src: url("../public/fonts/ofont.ru_Myriad\ Pro.ttf");
+}
+@font-face {
+  font-family: "Nico-Moji";
+  src: url("../public/fonts/NicoMoji-Regular.ttf");
+}
+@font-face {
+  font-family: "Neonderthaw";
+  src: url("../public/fonts/Neonderthaw-Regular.ttf");
+}
+@font-face {
+  font-family: "Radiotehnika";
+  src: url("../public/fonts/ofont.ru_Radiotechnika.ttf");
+}
+.App {
+  padding: 50px 80px;
+}
+.header-container {
+  display: flex;
+  flex-direction: row;
+  float: right;
+  gap: 32px;
+}
+a {
+  cursor: pointer;
+  text-decoration: none;
+  font-family: "Myraid-pro";
+  color: black;
+  font-weight: 400;
+}
+.header_login {
+  position: relative;
+  width: 117px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: -10px;
+  background-color: black;
+  border-radius: 30px;
+}
+.header_login-text {
+  color: white;
+}
+.block-file-container {
+  position: relative;
+  top: -15px;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 300px;
+  height: 70px;
+  border-radius: 25px 25px 0px 0px;
+}
+.file-text-container {
+  color: white;
+  font-size: 66px;
+  font-weight: 400;
+}
+.file-text-container p {
+  font-family: "Nico-Moji";
+}
+.file-text-container span {
+  font-family: "Neonderthaw";
+}
+.main-container {
+  width: 1122px;
+  height: 682px;
+  background-color: black;
+  color: white;
+  border-radius: 0px 60px 60px 60px;
+  position: relative;
+  top: -95px;
+}
+.main-text-container {
+  position: relative;
+  top: 20%;
+  left: 80px;
+  width: 656px;
+}
+.main-text-container .main-text-header {
+  font-family: "Radiotehnika";
+  font-size: 78px;
+}
+.main-text-container .main-text-desc {
+  font-size: 29px;
+  font-family: "Myraid-pro";
+  position: relative;
+  top: -75px;
+}
+.image-container {
+  position: relative;
+  float: right;
+  top: -153px;
+}
+.image-container img {
+  border-radius: 0px 0px 60px 0px;
+}
+.upload-button{
+  width: 331px;
+  height: 95px;
+  margin-top: 85px;
+  position: relative;
+  left: 80px;
+  border: 0;
+  border-radius: 16px;
+  border-bottom: 5px solid #5e8849;
+  color:rgba(5, 66, 23, 1);
+  font-family: "Myraid-pro";
+  font-size: 33px;
+  cursor: pointer;
+  background: linear-gradient(144deg, rgba(164,244,83,1) 21%, rgba(137,236,86,1) 40%, rgba(113,228,123,1) 79%);
+  box-shadow:0px 0 237px -20px rgba(164,244,83,1), 0 0 30px rgb(42, 102, 47);
+}
