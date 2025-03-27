@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import Header from "./Header";
-
+import GreenButton from "./ common/GreenButton";
+import BrandName from "./ common/BrandName";
 export default function MainPage() {
   const fileInputRef = useRef(null);
 
@@ -20,11 +21,7 @@ export default function MainPage() {
       <Header />
       <main>
         <div className="block-file-container">
-          <div className="file-text-container">
-            <p>
-              f<span>i</span>le
-            </p>
-          </div>
+         <BrandName theme={"dark"}/>
         </div>
         <div className="main-container">
           <div className="main-text-container">
@@ -41,9 +38,7 @@ export default function MainPage() {
             onChange={handleFileChange}
             multiple
           />
-          <button type="button" className="upload-button" onClick={handleButtonClick}>
-            <span>Выбрать файл</span>
-          </button>
+          <GreenButton handle={handleButtonClick} mode={"upload-button"} content={"Выбрать файл"}/>
         </div>
       </main>
     </div>

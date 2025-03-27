@@ -16,6 +16,10 @@
 }
 .App {
   padding: 50px 80px;
+  margin: 0%;
+}
+p {
+  margin: 0;
 }
 .header-container {
   display: flex;
@@ -56,12 +60,20 @@ a {
   border-radius: 25px 25px 0px 0px;
 }
 .file-text-container {
-  color: white;
   font-size: 66px;
+  position: relative;
   font-weight: 400;
+}
+.dark {
+  color: white;
+}
+.light {
+  left: 45px;
+  color: black;
 }
 .file-text-container p {
   font-family: "Nico-Moji";
+  margin: 0;
 }
 .file-text-container span {
   font-family: "Neonderthaw";
@@ -73,7 +85,7 @@ a {
   color: white;
   border-radius: 0px 60px 60px 60px;
   position: relative;
-  top: -95px;
+  bottom: 20px;
 }
 .main-text-container {
   position: relative;
@@ -89,29 +101,119 @@ a {
   font-size: 29px;
   font-family: "Myraid-pro";
   position: relative;
-  top: -75px;
+  top: 10px;
 }
 .image-container {
   position: relative;
   float: right;
-  top: -153px;
+  bottom: 45px;
 }
 .image-container img {
   border-radius: 0px 0px 60px 0px;
 }
-.upload-button{
-  width: 331px;
-  height: 95px;
-  margin-top: 85px;
-  position: relative;
-  left: 80px;
+button {
   border: 0;
   border-radius: 16px;
   border-bottom: 5px solid #5e8849;
-  color:rgba(5, 66, 23, 1);
+  color: rgb(32, 88, 49);
   font-family: "Myraid-pro";
-  font-size: 33px;
   cursor: pointer;
-  background: linear-gradient(144deg, rgba(164,244,83,1) 21%, rgba(137,236,86,1) 40%, rgba(113,228,123,1) 79%);
-  box-shadow:0px 0 237px -20px rgba(164,244,83,1), 0 0 30px rgb(42, 102, 47);
+  background: linear-gradient(
+    144deg,
+    rgba(164, 244, 83, 1) 21%,
+    rgba(137, 236, 86, 1) 40%,
+    rgba(113, 228, 123, 1) 79%
+  );
+  box-shadow: 0px 0 237px -20px rgba(164, 244, 83, 1), 0 0 30px rgb(42, 102, 47);
+}
+.upload-button {
+  width: 331px;
+  height: 95px;
+  font-size: 33px;
+  position: relative;
+  left: 80px;
+  top: 240px;
+}
+.regist-icon {
+  position: absolute;
+  z-index: 1;
+}
+.i_right {
+  left: 0;
+  top: 0;
+}
+.i_left {
+  right: 0;
+  top: 0;
+}
+.i_bottom {
+  bottom: 0;
+  left: 63%;
+}
+.i_middle {
+  top: 43%;
+}
+.form-content {
+  width: 555px;
+  height: 595px;
+  position: relative;
+  border-radius: 80px;
+  top: 40px;
+  display: block;
+  background-color: black;
+  margin-left: 25%;
+  margin-right: 50%;
+}
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  bottom: 20px;
+  gap: 14.5px;
+}
+.form-item input {
+  width: 432px;
+  height: 30px;
+  position: relative;
+  bottom: 3px;
+  border-radius: 30px;
+  padding: 0 10px;
+  color: black;
+  font-family: "Myraid-pro";
+  font-size: 26px;
+}
+.form-text {
+  position: relative;
+  left: 13px;
+  margin: 0;
+  color: white;
+  font-family: "Myraid-pro";
+  font-size: 26px;
+}
+.form-header p {
+  font-family: "Radiotehnika";
+  font-size: 46px;
+  color: white;
+  position: relative;
+  display: flex;
+  bottom: 52px;
+  justify-content: center;
+}
+.form-header img {
+  position: relative;
+  bottom: 70px;
+  left: 200px;
+  border-radius: 50%;
+  border-width: 4px;
+  border-color: black;
+  border-style: solid;
+}
+.small-button {
+  width: 331px;
+  height: 55px;
+  margin-top: 36px;
+  font-size: 29px;
+  position: relative;
+  left: 0px;
 }
