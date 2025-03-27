@@ -78,13 +78,13 @@ INSERT INTO file_types (file_type_id, type_name) VALUES
 (7, 'rar');
 SELECT * FROM file_types;
 INSERT INTO users (user_id, nickname, email, encrypted_password, registration_date, files_visibility) VALUES
-(1, 'Петров Иван', 'ivan@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-(2, 'Васильева Анна', 'anna@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private'),
-(3, 'Иванов Александр', 'alex@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-(4, 'Котова Мария', 'maria@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-(5, 'Зеленов Давид', 'david@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private'),
-(6, 'Белова Ольга', 'olga@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-(7, 'Федоров Сергей', 'sergey@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private');
+(1, 'petrov_ivan', 'ivan@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
+(2, 'vasilyeva_anna', 'anna@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private'),
+(3, 'ivanov_alex', 'alex@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
+(4, 'kotova_maria', 'maria@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
+(5, 'zel_ivan', 'david@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private'),
+(6, 'belolga', 'olga@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
+(7, 'fedsergey', 'sergey@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private');
 SELECT * FROM users;
 INSERT INTO files (file_id, file_name, file_type_id, file_size, owner_id, file_path, upload_date) VALUES
 (1, 'vacation_photo.jpg', 1, 2456789, 1, '/uploads/1/vacation_photo.jpg', CURRENT_TIMESTAMP),
@@ -139,7 +139,7 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
-CALL add_new_user('Михайлов Михаил', 'new_user@example.com', '$2a$10$hashedpassword123');
+CALL add_new_user('mih_mih', 'new_user@example.com', '$2a$10$hashedpassword123');
 
 -- Булевая функция поиска юзера по почте
 DELIMITER //
@@ -179,19 +179,19 @@ END //
 DELIMITER ;
 
 -- Проверка существования пользователя
-SELECT authenticate_user('Петров Иван', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e') AS auth_result;
+SELECT authenticate_user('petrov_ivan', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e') AS auth_result;
 
 -- Процедура поиска пользователя по никнейму
 DELIMITER //
-CREATE PROCEDURE find_user_by_exact_nickname(
-    IN p_nickname VARCHAR(50)
-)
+CREATE FUNCTION uni_nickname(
+    p_nickname VARCHAR(50))
+RETURNS BOOLEAN
+DETERMINISTIC
+READS SQL DATA
 BEGIN
-        SELECT 
-            user_id, nickname, email, registration_date, files_visibility
+    RETURN EXISTS (
+        SELECT 1 
         FROM users
-        WHERE nickname = p_nickname; 
-     
+        WHERE nickname = p_nickname);
 END //
 DELIMITER ;
-CALL find_user_by_exact_nickname('Петров Иван');
