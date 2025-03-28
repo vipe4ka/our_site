@@ -68,48 +68,29 @@ BEGIN
     );
 END //
 DELIMITER ;
-INSERT INTO file_types (file_type_id, type_name) VALUES
-(1, 'jpg'),
-(2, 'pptx'),
-(3, 'pdf'),
-(4, 'txt'),
-(5, 'mp4'),
-(6, 'xlsx'),
-(7, 'rar');
+INSERT INTO file_types (type_name) VALUES
+('Picture'),
+('Microsoft Office'),
+('PDF'),
+('TXT'),
+('Audio'),
+('Video'),
+('Archive'),
+('Executable'),
+('Other');
 SELECT * FROM file_types;
-INSERT INTO users (user_id, nickname, email, encrypted_password, registration_date, files_visibility) VALUES
-(1, 'petrov_ivan', 'ivan@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-(2, 'vasilyeva_anna', 'anna@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private'),
-(3, 'ivanov_alex', 'alex@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-(4, 'kotova_maria', 'maria@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-(5, 'zel_ivan', 'david@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private'),
-(6, 'belolga', 'olga@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-(7, 'fedsergey', 'sergey@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private');
+INSERT INTO users (nickname, email, encrypted_password, registration_date, files_visibility) VALUES
+('petrov_ivan', 'ivan@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
+('vasilyeva_anna', 'anna@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private'),
+('ivanov_alex', 'alex@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
+('kotova_maria', 'maria@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
+('zel_ivan', 'david@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private'),
+('belolga', 'olga@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
+('fedsergey', 'sergey@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private');
 SELECT * FROM users;
-INSERT INTO files (file_id, file_name, file_type_id, file_size, owner_id, file_path, upload_date) VALUES
-(1, 'vacation_photo.jpg', 1, 2456789, 1, '/uploads/1/vacation_photo.jpg', CURRENT_TIMESTAMP),
-(2, 'report.pdf', 3, 1234567, 2, '/uploads/2/report.pdf', CURRENT_TIMESTAMP),
-(3, 'presentation.pptx', 2, 3456789, 3, '/uploads/3/presentation.pptx', CURRENT_TIMESTAMP),
-(4, 'notes.txt', 4, 1024, 4, '/uploads/4/notes.txt', CURRENT_TIMESTAMP),
-(5, 'budget.xlsx', 6, 2345678, 5, '/uploads/5/budget.xlsx', CURRENT_TIMESTAMP),
-(6, 'movie.mp4', 5, 123456789, 6, '/uploads/7/movie.mp4', CURRENT_TIMESTAMP),
-(7, 'project.rar', 7, 3456789, 7, '/uploads/9/project.rar', CURRENT_TIMESTAMP);
-SELECT * FROM files;
-INSERT INTO download_audit (audit_id, file_id, file_owner_id, downloader_id, download_time) VALUES
-(1, 1, 1, 2, CURRENT_TIMESTAMP),
-(2, 2, 2, 1, CURRENT_TIMESTAMP),
-(3, 3, 3, 4, CURRENT_TIMESTAMP),
-(4, 4, 4, 3, CURRENT_TIMESTAMP),
-(5, 5, 5, 6, CURRENT_TIMESTAMP),
-(6, 6, 6, 5, CURRENT_TIMESTAMP),
-(7, 7, 7, 7, CURRENT_TIMESTAMP);
-SELECT * FROM download_audit;
 
 -- Вывод всех персональных страниц
 SELECT * FROM personal_pages_info;
-
--- Проверка доверенного источника
-SELECT  u.nickname AS profile_owner, check_trusted_source(1, u.user_id) AS is_trusted_for_user_2 FROM users u;
 
 -- Процедура добавления пользователя
 DELIMITER //
@@ -130,8 +111,8 @@ BEGIN
         SELECT 'Error: User with this nickname or email already exists' AS message;
     ELSE
         -- Добавление нового пользователя
-        INSERT INTO users (nickname, email, encrypted_password, registration_date, files_visibility)
-        VALUES (p_nickname, p_email, p_password, CURRENT_TIMESTAMP, 'public');
+        INSERT INTO users (nickname, email, encrypted_password, registration_date)
+        VALUES (p_nickname, p_email, p_password, CURRENT_TIMESTAMP);
         -- Возвращаем информацию о добавленном пользователе
         SELECT 'User successfully added' AS message, user_id, nickname, email, registration_date
         FROM users
@@ -178,10 +159,7 @@ BEGIN
 END //
 DELIMITER ;
 
--- Проверка существования пользователя
-SELECT authenticate_user('petrov_ivan', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e') AS auth_result;
-
--- Процедура поиска пользователя по никнейму
+-- Функция поиска пользователя по никнейму
 DELIMITER //
 CREATE FUNCTION uni_nickname(
     p_nickname VARCHAR(50))
