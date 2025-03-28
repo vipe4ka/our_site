@@ -4,11 +4,12 @@ import { Context } from "../index";
 import BrandName from "./ common/BrandName";
 export default function LoginForm(props) {
   const { isRegist } = props;
+
   const [usname, setUsname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { store } = useContext(Context);
-
+  
   return (
     <>
       <BrandName theme={"light"} />
