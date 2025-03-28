@@ -34,6 +34,13 @@ a {
   color: black;
   font-weight: 400;
 }
+.back-link{
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  position: relative;
+  left: 40px;
+}
 .header_login {
   position: relative;
   width: 117px;
@@ -65,10 +72,10 @@ a {
   font-weight: 400;
 }
 .dark {
+  right: 40px;
   color: white;
 }
 .light {
-  left: 45px;
   color: black;
 }
 .file-text-container p {
@@ -175,6 +182,7 @@ button {
 .form-item input {
   width: 432px;
   height: 30px;
+  border: 0;
   position: relative;
   bottom: 3px;
   border-radius: 30px;
