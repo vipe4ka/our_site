@@ -26,9 +26,9 @@ export default class FileStore {
       console.log(e.res.data.message);
     }
   }
-  async singin(usname, email, password) {
+  async singin(username, email, password) {
     try {
-      const res = await AuthService.singin(usname, email, password);
+      const res = await AuthService.singin(username, email, password);
       localStorage.setItem("token", res.data.accessToken);
       this.setAuth(true);
       this.setUser(res.data.user);
