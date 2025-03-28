@@ -4,7 +4,7 @@ import { Context } from "../index";
 import BrandName from "./ common/BrandName";
 export default function LoginForm(props) {
   const { isRegist } = props;
-  const [usname, setUsname] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { store } = useContext(Context);
@@ -42,8 +42,8 @@ export default function LoginForm(props) {
             <div className="form-item">
               <p className="form-text">ФИО</p>
               <input
-                onChange={(e) => setUsname(e.target.value)}
-                value={usname}
+                onChange={(e) => setUsername(e.target.value)}
+                value={username}
                 type="text"
                 placeholder=""
               />
@@ -72,7 +72,7 @@ export default function LoginForm(props) {
             content={isRegist ? "Зарегистрироваться" : "Войти"}
             handle={() => {
               isRegist
-                ? store.singin(usname, email, password)
+                ? store.singin(username, email, password)
                 : store.login(email, password);
             }}
           />
