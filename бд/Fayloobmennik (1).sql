@@ -68,6 +68,7 @@ BEGIN
     );
 END //
 DELIMITER ;
+
 INSERT INTO file_types (type_name) VALUES
 ('Picture'),
 ('Microsoft Office'),
@@ -78,7 +79,7 @@ INSERT INTO file_types (type_name) VALUES
 ('Archive'),
 ('Executable'),
 ('Other');
-SELECT * FROM file_types;
+
 INSERT INTO users (nickname, email, encrypted_password, registration_date, files_visibility) VALUES
 ('petrov_ivan', 'ivan@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
 ('vasilyeva_anna', 'anna@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private'),
@@ -87,7 +88,6 @@ INSERT INTO users (nickname, email, encrypted_password, registration_date, files
 ('zel_ivan', 'david@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private'),
 ('belolga', 'olga@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
 ('fedsergey', 'sergey@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private');
-SELECT * FROM users;
 
 -- Вывод всех персональных страниц
 SELECT * FROM personal_pages_info;
@@ -120,7 +120,6 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
-CALL add_new_user('mih_mih', 'new_user@example.com', '$2a$10$hashedpassword123');
 
 -- Булевая функция поиска юзера по почте
 DELIMITER //
@@ -137,15 +136,12 @@ BEGIN
     
     RETURN user_count > 0;
 END //
-DELIMITER ;
--- Проверка нескольких email
-SELECT email, user_exists_by_email(email) AS is_registered
-FROM (SELECT 'ivan@example.com' AS email UNION SELECT 'unknown@test.com') t;
+DELIMITER 
 
 -- Булевая функция поиска юзера по нику и паролю
 DELIMITER //
 CREATE FUNCTION authenticate_user(
-    p_nickname VARCHAR(50),
+    p_email VARCHAR(50),
     p_password VARCHAR(255))
 RETURNS BOOLEAN
 DETERMINISTIC
@@ -154,7 +150,7 @@ BEGIN
     RETURN EXISTS (
         SELECT 1 
         FROM users
-        WHERE nickname = p_nickname 
+        WHERE email = p_email
         AND encrypted_password = p_password);
 END //
 DELIMITER ;
