@@ -42,6 +42,15 @@ export class DbController {
         }
     }
 
+    // Проверяем пароль пользователя
+    async authenticateUser(email, password) {
+        try {
+            const [result] = await this.connection.execute(`SELECT authenticate_user(?, ?) as "exists"`, [email, password]);
+            return result[0].exists;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 // База данных

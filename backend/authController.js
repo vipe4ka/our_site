@@ -1,7 +1,18 @@
 import { dbController } from "./dbController.js";
+import bcrypt from "bcrypt";
+
+// Количество раундов соления
+const saltRounds = 10;
+
+// Хэшируем пароль
+async function hashPassword(password) {
+    //const salt = await bcrypt.genSalt(saltRounds); генерируемая соль
+    const fixedSalt = "$2b$10$nO.MCzIxejS/BjWqpnN5ou"; //фикисрованная соль
+    const hashedPassword = await bcrypt.hash(password, fixedSalt);
+    return hashedPassword;
+}
 
 export class AuthController {
-    
     tokenMap = new Map();
     dbConnection = null;
 
@@ -24,8 +35,10 @@ export class AuthController {
             return res.status(400).json({message: "Логин занят"});
         }
 
+        // Хэш-пароль
+        const hashedPassword = await hashPassword(password);
         // Добавляем пользователя в базу
-        await dbController.addNewUser(username, email, password);
+        await dbController.addNewUser(username, email, hashedPassword);
         return res.json({message: "Пользователь зарегистрирован"});
     }
 
@@ -37,8 +50,14 @@ export class AuthController {
         if (findUser === 0) {
             return res.status(400).json({message: "Неверная почта или пароль"});
         }
+        // Хэш-пароль
+        const hashedPassword = await hashPassword(password);
+        const result = await dbController.authenticateUser(email, hashedPassword);
+        if (result === 0) {
+            return res.status(400).json({message: "Неверная почта или пароль"});
+        }
+
         const token = Math.random() * 10000;
-        this.tokenMap.set(username, token);
         return res.json({
             message: "Вход успешный",
             token

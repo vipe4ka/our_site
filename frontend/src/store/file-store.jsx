@@ -23,7 +23,7 @@ export default class FileStore {
       alert("Авторизация прошла успешно!");
     } catch (e) {
       alert("Повторите попытку входа!");
-      console.log(e.res.data.message);
+      console.log(e.response.data.message);
     }
   }
   async singin(username, email, password) {
@@ -35,7 +35,7 @@ export default class FileStore {
       alert("Регистриция прошла успешно!");
     } catch (e) {
       alert("Возникла ошибка регистрации!");
-      console.log(e.res.data.message);
+      console.log(e.response.data.message);
     }
   }
   async logout() {

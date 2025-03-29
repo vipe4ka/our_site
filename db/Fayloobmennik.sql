@@ -138,7 +138,7 @@ BEGIN
 END //
 DELIMITER 
 
--- Булевая функция поиска юзера по нику и паролю
+-- Булевая функция поиска юзера по почте и паролю
 DELIMITER //
 CREATE FUNCTION authenticate_user(
     p_email VARCHAR(50),
