@@ -45,8 +45,8 @@ export class DbController {
     // Проверяем пароль пользователя
     async authenticateUser(email, password) {
         try {
-            const [result] = await this.connection.execute(`SELECT authenticate_user(?, ?) as "exists"`, [email, password]);
-            return result[0].exists;
+            const [result] = await this.connection.execute(`SELECT authenticate_user(?) as "password_hash"`, [email]);
+            return result[0].password_hash;
         } catch (error) {
             throw error;
         }

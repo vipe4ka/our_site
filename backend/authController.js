@@ -6,9 +6,9 @@ const saltRounds = 10;
 
 // Хэшируем пароль
 async function hashPassword(password) {
-    //const salt = await bcrypt.genSalt(saltRounds); генерируемая соль
-    const fixedSalt = "$2b$10$nO.MCzIxejS/BjWqpnN5ou"; //фикисрованная соль
-    const hashedPassword = await bcrypt.hash(password, fixedSalt);
+    // Генерируемая соль
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedPassword = await bcrypt.hash(password, salt);
     return hashedPassword;
 }
 
@@ -51,9 +51,9 @@ export class AuthController {
             return res.status(400).json({message: "Неверная почта или пароль"});
         }
         // Хэш-пароль
-        const hashedPassword = await hashPassword(password);
-        const result = await dbController.authenticateUser(email, hashedPassword);
-        if (result === 0) {
+        const hashPassword = await dbController.authenticateUser(email);
+        const isValid = await bcrypt.compare(password, hashPassword);
+        if (!isValid) {
             return res.status(400).json({message: "Неверная почта или пароль"});
         }
 
