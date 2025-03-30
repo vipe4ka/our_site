@@ -15,7 +15,7 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL UNIQUE,
     encrypted_password VARCHAR(255) NOT NULL,
     registration_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    files_visibility ENUM('public', 'private') DEFAULT 'public',
+    files_visibility BOOLEAN DEFAULT 1 COMMENT '0 - private, 1 - public',
     deletion_date DATETIME DEFAULT NULL
 );
 
@@ -95,13 +95,13 @@ INSERT INTO file_types (type_name) VALUES
 ('Other');
 
 INSERT INTO users (nickname, email, encrypted_password, registration_date, files_visibility) VALUES
-('petrov_ivan', 'ivan@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-('vasilyeva_anna', 'anna@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private'),
-('ivanov_alex', 'alex@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-('kotova_maria', 'maria@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-('zel_ivan', 'david@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private'),
-('belolga', 'olga@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-('fedsergey', 'sergey@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private');
+('petrov_ivan', 'ivan@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 1),
+('vasilyeva_anna', 'anna@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 0),
+('ivanov_alex', 'alex@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 1),
+('kotova_maria', 'maria@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 1),
+('zel_ivan', 'david@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 0),
+('belolga', 'olga@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 1),
+('fedsergey', 'sergey@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 0);
 
 -- Процедура добавления пользователя
 DELIMITER //

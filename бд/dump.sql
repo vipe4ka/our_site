@@ -150,12 +150,12 @@ CREATE TABLE `users` (
   `email` varchar(100) NOT NULL,
   `encrypted_password` varchar(255) NOT NULL,
   `registration_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `files_visibility` enum('public','private') DEFAULT 'public',
+  `files_visibility` tinyint(1) DEFAULT '1' COMMENT '0 - private, 1 - public',
   `deletion_date` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `nickname` (`nickname`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -164,7 +164,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'petrov_ivan','ivan@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-28 12:52:59','public',NULL),(2,'vasilyeva_anna','anna@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-28 12:52:59','private',NULL),(3,'ivanov_alex','alex@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-28 12:52:59','public',NULL),(4,'kotova_maria','maria@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-28 12:52:59','public',NULL),(5,'zel_ivan','david@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-28 12:52:59','private',NULL),(6,'belolga','olga@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-28 12:52:59','public',NULL),(7,'fedsergey','sergey@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-28 12:52:59','private',NULL),(8,'mih_mih','new_user@example.com','$2a$10$hashedpassword123','2025-03-28 12:52:59','public',NULL);
+INSERT INTO `users` VALUES (1,'petrov_ivan','ivan@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',1,NULL),(2,'vasilyeva_anna','anna@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',0,NULL),(3,'ivanov_alex','alex@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',1,NULL),(4,'kotova_maria','maria@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',1,NULL),(5,'zel_ivan','david@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',0,NULL),(6,'belolga','olga@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',1,NULL),(7,'fedsergey','sergey@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',0,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -360,4 +360,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-30 15:26:25
+-- Dump completed on 2025-03-30 15:40:02
