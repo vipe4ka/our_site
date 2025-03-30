@@ -15,7 +15,7 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL UNIQUE,
     encrypted_password VARCHAR(255) NOT NULL,
     registration_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    files_visibility ENUM('public', 'private') DEFAULT 'public',
+    files_visibility BOOLEAN DEFAULT 1 COMMENT '0 - private, 1 - public',
     deletion_date DATETIME DEFAULT NULL
 );
 
@@ -44,15 +44,29 @@ CREATE TABLE download_audit (
     FOREIGN KEY (downloader_id) REFERENCES users(user_id)
 );
 
--- Персональные страницы
+-- Представление для информации о пользователе
 CREATE VIEW personal_pages_info AS
 SELECT 
-	user_id,
-	nickname,
-	registration_date,
-	files_visibility
-FROM users 
-GROUP BY user_id;
+    user_id,
+    nickname,
+    email,
+    registration_date,
+    files_visibility
+FROM users
+WHERE deletion_date IS NULL;
+
+-- Представление для информации о файлах пользователя
+CREATE VIEW user_files_info AS
+SELECT 
+    f.owner_id AS user_id,
+    f.file_id,
+    f.file_name,
+    ft.type_name AS file_type,
+    f.file_size,
+    f.upload_date,
+    f.file_path
+FROM files f
+JOIN file_types ft ON f.file_type_id = ft.file_type_id;
 
 -- Функция проверки доверенного источника
 DELIMITER //
@@ -81,16 +95,13 @@ INSERT INTO file_types (type_name) VALUES
 ('Other');
 
 INSERT INTO users (nickname, email, encrypted_password, registration_date, files_visibility) VALUES
-('petrov_ivan', 'ivan@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-('vasilyeva_anna', 'anna@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private'),
-('ivanov_alex', 'alex@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-('kotova_maria', 'maria@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-('zel_ivan', 'david@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private'),
-('belolga', 'olga@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
-('fedsergey', 'sergey@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private');
-
--- Вывод всех персональных страниц
-SELECT * FROM personal_pages_info;
+('petrov_ivan', 'ivan@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 1),
+('vasilyeva_anna', 'anna@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 0),
+('ivanov_alex', 'alex@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 1),
+('kotova_maria', 'maria@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 1),
+('zel_ivan', 'david@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 0),
+('belolga', 'olga@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 1),
+('fedsergey', 'sergey@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 0);
 
 -- Процедура добавления пользователя
 DELIMITER //
@@ -138,20 +149,19 @@ BEGIN
 END //
 DELIMITER 
 
--- Булевая функция поиска юзера по почте и паролю
+-- Аутентификация
 DELIMITER //
 CREATE FUNCTION authenticate_user(
-    p_email VARCHAR(50),
-    p_password VARCHAR(255))
-RETURNS BOOLEAN
+    p_email VARCHAR(50))
+RETURNS varchar(255)
 DETERMINISTIC
 READS SQL DATA
 BEGIN
-    RETURN EXISTS (
-        SELECT 1 
+    RETURN (
+        SELECT encrypted_password
         FROM users
         WHERE email = p_email
-        AND encrypted_password = p_password);
+	);
 END //
 DELIMITER ;
 

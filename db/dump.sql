@@ -114,8 +114,27 @@ SET @saved_cs_client     = @@character_set_client;
 /*!50001 CREATE VIEW `personal_pages_info` AS SELECT 
  1 AS `user_id`,
  1 AS `nickname`,
+ 1 AS `email`,
  1 AS `registration_date`,
  1 AS `files_visibility`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `user_files_info`
+--
+
+DROP TABLE IF EXISTS `user_files_info`;
+/*!50001 DROP VIEW IF EXISTS `user_files_info`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `user_files_info` AS SELECT 
+ 1 AS `user_id`,
+ 1 AS `file_id`,
+ 1 AS `file_name`,
+ 1 AS `file_type`,
+ 1 AS `file_size`,
+ 1 AS `upload_date`,
+ 1 AS `file_path`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -131,12 +150,12 @@ CREATE TABLE `users` (
   `email` varchar(100) NOT NULL,
   `encrypted_password` varchar(255) NOT NULL,
   `registration_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `files_visibility` enum('public','private') DEFAULT 'public',
+  `files_visibility` tinyint(1) DEFAULT '1' COMMENT '0 - private, 1 - public',
   `deletion_date` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `nickname` (`nickname`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -145,7 +164,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'petrov_ivan','ivan@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-28 12:52:59','public',NULL),(2,'vasilyeva_anna','anna@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-28 12:52:59','private',NULL),(3,'ivanov_alex','alex@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-28 12:52:59','public',NULL),(4,'kotova_maria','maria@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-28 12:52:59','public',NULL),(5,'zel_ivan','david@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-28 12:52:59','private',NULL),(6,'belolga','olga@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-28 12:52:59','public',NULL),(7,'fedsergey','sergey@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-28 12:52:59','private',NULL),(8,'mih_mih','new_user@example.com','$2a$10$hashedpassword123','2025-03-28 12:52:59','public',NULL);
+INSERT INTO `users` VALUES (1,'petrov_ivan','ivan@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',1,NULL),(2,'vasilyeva_anna','anna@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',0,NULL),(3,'ivanov_alex','alex@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',1,NULL),(4,'kotova_maria','maria@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',1,NULL),(5,'zel_ivan','david@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',0,NULL),(6,'belolga','olga@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',1,NULL),(7,'fedsergey','sergey@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',0,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -163,16 +182,15 @@ UNLOCK TABLES;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` FUNCTION `authenticate_user`(
-    p_email VARCHAR(50),
-    p_password VARCHAR(255)) RETURNS tinyint(1)
+    p_email VARCHAR(50)) RETURNS varchar(255) CHARSET utf8mb4
     READS SQL DATA
     DETERMINISTIC
 BEGIN
-    RETURN EXISTS (
-        SELECT 1 
+    RETURN (
+        SELECT encrypted_password
         FROM users
         WHERE email = p_email
-        AND encrypted_password = p_password);
+	);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -310,7 +328,25 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `personal_pages_info` AS select `users`.`user_id` AS `user_id`,`users`.`nickname` AS `nickname`,`users`.`registration_date` AS `registration_date`,`users`.`files_visibility` AS `files_visibility` from `users` group by `users`.`user_id` */;
+/*!50001 VIEW `personal_pages_info` AS select `users`.`user_id` AS `user_id`,`users`.`nickname` AS `nickname`,`users`.`email` AS `email`,`users`.`registration_date` AS `registration_date`,`users`.`files_visibility` AS `files_visibility` from `users` where (`users`.`deletion_date` is null) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `user_files_info`
+--
+
+/*!50001 DROP VIEW IF EXISTS `user_files_info`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `user_files_info` AS select `f`.`owner_id` AS `user_id`,`f`.`file_id` AS `file_id`,`f`.`file_name` AS `file_name`,`ft`.`type_name` AS `file_type`,`f`.`file_size` AS `file_size`,`f`.`upload_date` AS `upload_date`,`f`.`file_path` AS `file_path` from (`files` `f` join `file_types` `ft` on((`f`.`file_type_id` = `ft`.`file_type_id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -324,4 +360,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-29  9:35:52
+-- Dump completed on 2025-03-30 15:40:02
