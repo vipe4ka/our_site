@@ -114,8 +114,27 @@ SET @saved_cs_client     = @@character_set_client;
 /*!50001 CREATE VIEW `personal_pages_info` AS SELECT 
  1 AS `user_id`,
  1 AS `nickname`,
+ 1 AS `email`,
  1 AS `registration_date`,
  1 AS `files_visibility`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `user_files_info`
+--
+
+DROP TABLE IF EXISTS `user_files_info`;
+/*!50001 DROP VIEW IF EXISTS `user_files_info`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `user_files_info` AS SELECT 
+ 1 AS `user_id`,
+ 1 AS `file_id`,
+ 1 AS `file_name`,
+ 1 AS `file_type`,
+ 1 AS `file_size`,
+ 1 AS `upload_date`,
+ 1 AS `file_path`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -309,7 +328,25 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `personal_pages_info` AS select `users`.`user_id` AS `user_id`,`users`.`nickname` AS `nickname`,`users`.`registration_date` AS `registration_date`,`users`.`files_visibility` AS `files_visibility` from `users` group by `users`.`user_id` */;
+/*!50001 VIEW `personal_pages_info` AS select `users`.`user_id` AS `user_id`,`users`.`nickname` AS `nickname`,`users`.`email` AS `email`,`users`.`registration_date` AS `registration_date`,`users`.`files_visibility` AS `files_visibility` from `users` where (`users`.`deletion_date` is null) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `user_files_info`
+--
+
+/*!50001 DROP VIEW IF EXISTS `user_files_info`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `user_files_info` AS select `f`.`owner_id` AS `user_id`,`f`.`file_id` AS `file_id`,`f`.`file_name` AS `file_name`,`ft`.`type_name` AS `file_type`,`f`.`file_size` AS `file_size`,`f`.`upload_date` AS `upload_date`,`f`.`file_path` AS `file_path` from (`files` `f` join `file_types` `ft` on((`f`.`file_type_id` = `ft`.`file_type_id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -323,4 +360,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-30 15:12:15
+-- Dump completed on 2025-03-30 15:26:25

@@ -44,15 +44,29 @@ CREATE TABLE download_audit (
     FOREIGN KEY (downloader_id) REFERENCES users(user_id)
 );
 
--- Персональные страницы
+-- Представление для информации о пользователе
 CREATE VIEW personal_pages_info AS
 SELECT 
-	user_id,
-	nickname,
-	registration_date,
-	files_visibility
-FROM users 
-GROUP BY user_id;
+    user_id,
+    nickname,
+    email,
+    registration_date,
+    files_visibility
+FROM users
+WHERE deletion_date IS NULL;
+
+-- Представление для информации о файлах пользователя
+CREATE VIEW user_files_info AS
+SELECT 
+    f.owner_id AS user_id,
+    f.file_id,
+    f.file_name,
+    ft.type_name AS file_type,
+    f.file_size,
+    f.upload_date,
+    f.file_path
+FROM files f
+JOIN file_types ft ON f.file_type_id = ft.file_type_id;
 
 -- Функция проверки доверенного источника
 DELIMITER //
