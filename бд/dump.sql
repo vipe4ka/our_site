@@ -163,16 +163,15 @@ UNLOCK TABLES;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` FUNCTION `authenticate_user`(
-    p_email VARCHAR(50),
-    p_password VARCHAR(255)) RETURNS tinyint(1)
+    p_email VARCHAR(50)) RETURNS varchar(255) CHARSET utf8mb4
     READS SQL DATA
     DETERMINISTIC
 BEGIN
-    RETURN EXISTS (
-        SELECT 1 
+    RETURN (
+        SELECT encrypted_password
         FROM users
         WHERE email = p_email
-        AND encrypted_password = p_password);
+	);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -324,4 +323,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-29  9:35:52
+-- Dump completed on 2025-03-30 15:12:15

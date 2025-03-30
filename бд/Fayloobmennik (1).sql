@@ -89,9 +89,6 @@ INSERT INTO users (nickname, email, encrypted_password, registration_date, files
 ('belolga', 'olga@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'public'),
 ('fedsergey', 'sergey@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 'private');
 
--- Вывод всех персональных страниц
-SELECT * FROM personal_pages_info;
-
 -- Процедура добавления пользователя
 DELIMITER //
 CREATE PROCEDURE add_new_user(
@@ -138,20 +135,19 @@ BEGIN
 END //
 DELIMITER 
 
--- Булевая функция поиска юзера по нику и паролю
+-- Аутентификация
 DELIMITER //
 CREATE FUNCTION authenticate_user(
-    p_email VARCHAR(50),
-    p_password VARCHAR(255))
-RETURNS BOOLEAN
+    p_email VARCHAR(50))
+RETURNS varchar(255)
 DETERMINISTIC
 READS SQL DATA
 BEGIN
-    RETURN EXISTS (
-        SELECT 1 
+    RETURN (
+        SELECT encrypted_password
         FROM users
         WHERE email = p_email
-        AND encrypted_password = p_password);
+	);
 END //
 DELIMITER ;
 
