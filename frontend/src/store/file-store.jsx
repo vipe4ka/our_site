@@ -20,7 +20,7 @@ export default class FileStore {
       localStorage.setItem("token", res.data.accessToken);
       this.setAuth(true);
       this.setUser(res.data.user);
-      alert("Авторизация прошла успешно!");
+      window.open("http://localhost:3000/user/", "_self");
     } catch (e) {
       alert("Повторите попытку входа!");
       console.log(e.response.data.message);
@@ -32,9 +32,9 @@ export default class FileStore {
       localStorage.setItem("token", res.data.accessToken);
       this.setAuth(true);
       this.setUser(res.data.user);
-      alert("Регистриция прошла успешно!");
+      window.open("http://localhost:3000/user/", "_self");
     } catch (e) {
-      alert("Возникла ошибка регистрации!");
+      alert("Ошибка регистранции!");
       console.log(e.response.data.message);
     }
   }
@@ -44,7 +44,7 @@ export default class FileStore {
       localStorage.removeItem("token");
       this.setAuth(false);
       this.setUser({});
-      alert("Вы успешно покинули систему!");
+      window.open("http://localhost:3000/", "_self");
     } catch (e) {
       alert("При выходе возникла ошибка!");
       console.log(e.res.data.message);

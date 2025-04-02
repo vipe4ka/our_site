@@ -34,7 +34,7 @@ a {
   color: black;
   font-weight: 400;
 }
-.back-link{
+.back-link {
   display: flex;
   align-items: center;
   width: fit-content;
@@ -43,12 +43,13 @@ a {
 }
 .header_login {
   position: relative;
-  width: 117px;
+  width: fit-content;
   height: 35px;
   display: flex;
   justify-content: center;
   align-items: center;
   top: -10px;
+  padding: 0px 20px;
   background-color: black;
   border-radius: 30px;
 }
@@ -100,7 +101,7 @@ a {
   left: 80px;
   width: 656px;
 }
-.main-text-container .main-text-header {
+.main-text-header {
   font-family: "Radiotehnika";
   font-size: 78px;
 }
@@ -184,7 +185,7 @@ button {
   height: 30px;
   border: 0;
   position: relative;
-  bottom: 3px;
+  bottom: 0;
   border-radius: 30px;
   padding: 0 10px;
   color: black;
@@ -224,4 +225,98 @@ button {
   font-size: 29px;
   position: relative;
   left: 0px;
+}
+.invert {
+  filter: invert(1);
+  height: 30px;
+  font-size: 26px;
+}
+.user-container {
+  width: 1122px;
+  height: 300px;
+  background-color: black;
+  color: white;
+  display: flex;
+  border-radius: 0px 80px 80px 80px;
+  position: relative;
+  bottom: 20px;
+}
+.toggle-btn {
+  position: relative;
+  left: 370px;
+}
+.toggle-btn input {
+  display: none;
+}
+.toggle-btn label {
+  position: relative;
+  cursor: pointer;
+  display: block;
+  width: 60px;
+  height: 30px;
+  background: #cccccc;
+  border-radius: 50px;
+  transition: 300ms linear;
+}
+
+.toggle-btn label:before {
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  transform: translateY(-50%);
+  content: "";
+  box-shadow: 0px 0px 5px black;
+  display: block;
+  width: 25px;
+  height: 25px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: left 300ms linear;
+}
+.user-container img {
+  width: 264px;
+  height: 264px;
+  border: solid 5px white;
+  border-radius: 50%;
+  position: relative;
+  left: 70px;
+  top: 80px;
+}
+.toggle-btn input:checked + label {
+  background: #39b73f;
+}
+.user-header {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  left: 100px;
+  top: 50px;
+}
+.toggle-btn input:checked + label:before {
+  left: 33px;
+}
+.user-content-container {
+  position: relative;
+  display: flex;
+  left: 430px;
+  top: 10px;
+}
+.user-content-container p {
+  position: relative;
+  font-size: 26px;
+}
+.user-content {
+  width: 780px;
+  height: 250px;
+  border-radius: 0 80px 80px 0;
+  position: relative;
+  background-color: black;
+  left: 345px;
+  top: 40px;
+}
+.share-btn {
+  position: relative;
+  top: 40px;
+  left: 790px;
 }
