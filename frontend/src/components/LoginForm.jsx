@@ -40,7 +40,7 @@ export default function LoginForm(props) {
         <div className="form-container">
           {isRegist && (
             <div className="form-item">
-              <p className="form-text">ФИО</p>
+              <p className="form-text">Логин</p>
               <input
                 onChange={(e) => setUsername(e.target.value)}
                 value={username}

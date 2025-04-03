@@ -20,7 +20,7 @@ export default class FileStore {
       localStorage.setItem("token", res.data.accessToken);
       this.setAuth(true);
       this.setUser(res.data.user);
-      window.open("http://localhost:3000/user/", "_self");
+      window.open("http://localhost:3000/user/" + this.user.username, "_self");
     } catch (e) {
       alert("Повторите попытку входа!");
       console.log(e.response.data.message);
@@ -32,9 +32,9 @@ export default class FileStore {
       localStorage.setItem("token", res.data.accessToken);
       this.setAuth(true);
       this.setUser(res.data.user);
-      window.open("http://localhost:3000/user/", "_self");
+      window.open("http://localhost:3000/user/" + username, "_self");
     } catch (e) {
-      alert("Ошибка регистранции!");
+      alert("Ошибка регистрации!");
       console.log(e.response.data.message);
     }
   }
