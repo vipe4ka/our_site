@@ -1,6 +1,6 @@
 -- Создание базы данных
-CREATE DATABASE IF NOT EXISTS file_sharing;
-USE file_sharing;
+CREATE DATABASE IF NOT EXISTS fileserver;
+USE fileserver;
 
 -- Таблица типов файлов
 CREATE TABLE file_types (
@@ -134,20 +134,20 @@ DELIMITER ;
 
 -- Булевая функция поиска юзера по почте
 DELIMITER //
-CREATE FUNCTION user_exists_by_email(p_email VARCHAR(100)) 
-RETURNS BOOLEAN
+CREATE FUNCTION user_by_email(p_email VARCHAR(100)) 
+RETURNS TEXT
 DETERMINISTIC
 READS SQL DATA
 BEGIN
-    DECLARE user_count INT;
+    DECLARE user TEXT;
     
-    SELECT COUNT(*) INTO user_count
+    SELECT nickname INTO user
     FROM users
     WHERE email = p_email;
     
-    RETURN user_count > 0;
+    RETURN user;
 END //
-DELIMITER 
+DELIMITER ;
 
 -- Аутентификация
 DELIMITER //
@@ -177,5 +177,42 @@ BEGIN
         SELECT 1 
         FROM users
         WHERE nickname = p_nickname);
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE get_user_info(
+    IN p_user_id INT
+)
+BEGIN
+    SELECT JSON_OBJECT(
+        'user_id', user_id,
+        'nickname', nickname,
+        'email', email,
+        'registration_date', registration_date,
+        'files_visibility', files_visibility
+    ) AS user_info
+    FROM personal_pages_info
+    WHERE user_id = p_user_id;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE get_user_files_info(
+    IN p_user_id INT
+)
+BEGIN
+    SELECT JSON_ARRAYAGG(
+        JSON_OBJECT(
+            'file_id', file_id,
+            'file_name', file_name,
+            'file_type', file_type,
+            'file_size', file_size,
+            'upload_date', upload_date,
+            'file_path', file_path
+        )
+    ) AS user_files_info
+    FROM user_files_info
+    WHERE user_id = p_user_id;
 END //
 DELIMITER ;
