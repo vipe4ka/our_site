@@ -13,10 +13,10 @@ export class DbController {
     }
 
     // Проверяем существует ли пользователя по почте
-    async userExistsByEmail(email) {
+    async userByEmail(email) {
         try {
-            const [result] = await this.connection.execute(`SELECT user_exists_by_email(?) as "exists"`, [email]);
-            return result[0].exists;
+            const [result] = await this.connection.execute(`SELECT user_by_email(?) as "username"`, [email]);
+            return result[0].username;
         } catch (error) {
             throw error;
         }

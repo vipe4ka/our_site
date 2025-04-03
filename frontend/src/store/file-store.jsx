@@ -17,10 +17,10 @@ export default class FileStore {
     try {
       const res = await AuthService.login(email, password);
       console.log(res);
-      localStorage.setItem("token", res.data.accessToken);
+      localStorage.setItem("token", res.data.token);
       this.setAuth(true);
       this.setUser(res.data.user);
-      window.open("http://localhost:3000/user/" + this.user.username, "_self");
+      window.open("http://localhost:3000/user/" + this.user, "_self");
     } catch (e) {
       alert("Повторите попытку входа!");
       console.log(e.response.data.message);
@@ -29,9 +29,9 @@ export default class FileStore {
   async singin(username, email, password) {
     try {
       const res = await AuthService.singin(username, email, password);
-      localStorage.setItem("token", res.data.accessToken);
+      localStorage.setItem("token", res.data.token);
       this.setAuth(true);
-      this.setUser(res.data.user);
+      this.setUser(username);
       window.open("http://localhost:3000/user/" + username, "_self");
     } catch (e) {
       alert("Ошибка регистрации!");

@@ -1,5 +1,5 @@
 import express from "express";
-import { router } from "./authRouter.js";
+import { routerAuth, routerUser } from "./authRouter.js";
 import cors from "cors";
 const app = express();
 const port = process.env.PORT || 5000;
@@ -12,8 +12,9 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"], // Разрешенные заголовки
     credentials: true // Разрешает передачу куки и авторизационных данных
 }));
-app.use("/auth", router);
 
+app.use("/auth", routerAuth);
+app.use("/user", routerUser);
 
 const start = async () => {
     try {

@@ -1,6 +1,6 @@
 -- Создание базы данных
-CREATE DATABASE IF NOT EXISTS file_sharing;
-USE file_sharing;
+CREATE DATABASE IF NOT EXISTS fileserver;
+USE fileserver;
 
 -- Таблица типов файлов
 CREATE TABLE file_types (
@@ -134,20 +134,20 @@ DELIMITER ;
 
 -- Булевая функция поиска юзера по почте
 DELIMITER //
-CREATE FUNCTION user_exists_by_email(p_email VARCHAR(100)) 
-RETURNS BOOLEAN
+CREATE FUNCTION user_by_email(p_email VARCHAR(100)) 
+RETURNS TEXT
 DETERMINISTIC
 READS SQL DATA
 BEGIN
-    DECLARE user_count INT;
+    DECLARE user TEXT;
     
-    SELECT COUNT(*) INTO user_count
+    SELECT nickname INTO user
     FROM users
     WHERE email = p_email;
     
-    RETURN user_count > 0;
+    RETURN user;
 END //
-DELIMITER 
+DELIMITER ;
 
 -- Аутентификация
 DELIMITER //
