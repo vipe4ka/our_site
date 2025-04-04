@@ -44,7 +44,7 @@ export default function UserPage() {
         <div className="user-container">
           <img src="/pictures/face.png" alt="face"></img>
           <div className="user-header">
-            <p className="main-text-header">ЮЗЕРНЭЙМ</p>
+            <p className="main-text-header">{nickname.toUpperCase()}</p>
             <Link to="/edit" className="header_login invert">
               <div className="header_login-text">
                 <span className="white-p">Редактировать профиль</span>

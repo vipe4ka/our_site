@@ -273,7 +273,7 @@ button {
   border-radius: 50%;
   transition: left 300ms linear;
 }
-.user-container img {
+.user-header img {
   width: 264px;
   height: 264px;
   border: solid 5px white;
@@ -319,4 +319,33 @@ button {
   position: relative;
   top: 40px;
   left: 790px;
+}
+.other-header {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  position: relative;
+  left: 100px;
+  top: 50px;
+}
+.other-header .main-text-header {
+  position: relative;
+  top: 40px;
+  right: 20px;
+}
+.user-file-icon {
+  position: relative;
+  right: 138px;
+  bottom: 50px;
+  border-radius: 0 0 80px 0;
+}
+.check-icon {
+  width: 140px;
+  height: 170px;
+  position: relative;
+  bottom: 20px;
+  right: 60px;
+}
+.other-content {
+  left: 80px;
 }

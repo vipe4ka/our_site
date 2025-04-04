@@ -5,6 +5,7 @@ import MainPage from "./components/MainPage";
 import About from "./components/About";
 import NotFound from "./components/NotFound";
 import UserPage from "./components/UserPage";
+import MyPage from "./components/OtherPage";
 function App() {
   return (
     <div className="App">
@@ -12,8 +13,8 @@ function App() {
         <Route path="/" element={<MainPage />}></Route>
         <Route path="/sing-in" element={<LoginForm isRegist={true} />}></Route>
         <Route path="/log-in" element={<LoginForm isRegist={false} />}></Route>
-        <Route path="/user/:nickname" element={<UserPage />}></Route>
-        <Route path="/about" element={<About />}></Route>
+        <Route path="/user/:nickname" element={<MyPage />}></Route>
+        <Route path="/about" element={<UserPage />}></Route>
         <Route path="*" element={<NotFound />}></Route>
       </Routes>
     </div>
