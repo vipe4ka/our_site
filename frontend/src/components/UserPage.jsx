@@ -1,48 +1,65 @@
 import BrandName from "./ common/BrandName";
 import GreenButton from "./ common/GreenButton";
-import Header from "./Header";
-import UserService from "../services/UserService"
-import { useEffect, useState } from 'react';
-import {useParams} from 'react-router-dom';
+import NotFound from "./NotFound";
+import UserService from "../services/UserService";
+import { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Link } from "react-router";
+import OtherPage from "./OtherPage";
+import { Context } from "../index";
+
 export default function UserPage() {
-  const { nickname } = useParams(); // Получение параметра nickname из URL
-  const [userData, setUserData] = useState(null); // Состояние для хранения данных пользователя
-  const [loading, setLoading] = useState(true); // Флаг загрузки данных
+  const { nickname } = useParams();
+  const [userData, setUserData] = useState(null);
+  const store = useContext(Context);
 
   useEffect(() => {
     async function fetchUserData() {
       try {
-        const response = await UserService.usersRequest(nickname); // Запрос на сервер
-        setUserData(response.data); // Сохраняем полученные данные
-        setLoading(false); // Завершаем загрузку
+        const response = await UserService.usersRequest(nickname);
+        setUserData(response.data);
       } catch (error) {
-        console.error('Ошибка при получении данных пользователя:', error);
-        setLoading(false); // Завершаем загрузку даже при ошибке
+        console.error("Ошибка при получении данных пользователя:", error);
       }
     }
 
-    fetchUserData(); // Вызываем функцию для получения данных
-  }, [nickname]); // Выполняем запрос только при изменении nickname
-
-  if (loading) {
-    return <p>Загрузка...</p>; // Показываем индикатор загрузки
-  }
+    fetchUserData();
+  }, [nickname]); 
 
   if (!userData) {
-    return <p>Пользователь не найден.</p>; // Сообщение, если пользователь не существует
+    return <NotFound />;
   }
 
-
+  if (!userData.isItYou) {
+    return <OtherPage name={nickname} />;
+  }
   return (
     <>
-      <Header isLog={true} />
+      <header>
+        <div className="header-container">
+          <Link to="/about" className="header_item ">
+            <span>О НАС</span>
+          </Link>
+          <Link
+            to="/"
+            className="header_login "
+            onClick={(e) => {
+              e.preventDefault();
+              store.logout();
+            }}
+          >
+            <div className="header_login-text">
+              <span className="white-p">ВЫХОД</span>
+            </div>
+          </Link>
+        </div>
+      </header>{" "}
       <div className="block-file-container">
         <BrandName theme={"dark"} />
       </div>
       <div>
         <div className="user-container">
-          <img src="/pictures/face.png" alt="face"></img>
+          <img className="user-icon" src="/pictures/face.png" alt="face"></img>
           <div className="user-header">
             <p className="main-text-header">{nickname.toUpperCase()}</p>
             <Link to="/edit" className="header_login invert">
@@ -65,4 +82,4 @@ export default function UserPage() {
       <GreenButton mode={"small-button share-btn"} content={"Поделиться"} />
     </>
   );
-}
+};

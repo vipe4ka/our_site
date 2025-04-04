@@ -1,8 +1,12 @@
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import Header from "./Header";
 import GreenButton from "./ common/GreenButton";
 import BrandName from "./ common/BrandName";
+import { Context } from "../index";
+
 export default function MainPage() {
+
+  const store = useContext(Context)
   const fileInputRef = useRef(null);
 
   const handleFileChange = (event) => {
@@ -18,7 +22,7 @@ export default function MainPage() {
 
   return (
     <div>
-      <Header />
+      <Header isLog={store.isAuth} />
       <main>
         <div className="block-file-container">
          <BrandName theme={"dark"}/>

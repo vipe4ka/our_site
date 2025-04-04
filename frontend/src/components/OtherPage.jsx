@@ -1,9 +1,8 @@
 import Header from "./Header";
 import BrandName from "./ common/BrandName";
-import { Link } from "react-router";
 import GreenButton from "./ common/GreenButton";
 
-export default function OtherPage() {
+export default function OtherPage(props) {
   return (
     <>
       <Header isLog={true} />
@@ -13,7 +12,7 @@ export default function OtherPage() {
       <div>
         <div className="user-container">
           <div className="other-header">
-            <p className="main-text-header">ЮЗЕРНЭЙМ</p>
+            <p className="main-text-header">{props.name.toUpperCase()}</p>
             <img
               className="check-icon"
               src="/pictures/check-icon.png"

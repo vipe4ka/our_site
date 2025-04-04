@@ -17,6 +17,7 @@
 .App {
   padding: 50px 80px;
   margin: 0%;
+  overflow: hidden;
 }
 p {
   margin: 0;
@@ -273,7 +274,7 @@ button {
   border-radius: 50%;
   transition: left 300ms linear;
 }
-.user-header img {
+.user-icon {
   width: 264px;
   height: 264px;
   border: solid 5px white;
@@ -332,10 +333,11 @@ button {
   position: relative;
   top: 40px;
   right: 20px;
+  width: 575px;
 }
 .user-file-icon {
   position: relative;
-  right: 138px;
+  right: 104px;
   bottom: 50px;
   border-radius: 0 0 80px 0;
 }

@@ -4,6 +4,7 @@ import AuthService from "../services/AuthService";
 export default class FileStore {
   user = {};
   isAuth = false;
+  
   constructor() {
     makeAutoObservable(this);
   }
@@ -18,6 +19,7 @@ export default class FileStore {
       const res = await AuthService.login(email, password);
       console.log(res);
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("nickname", this.user.username);
       this.setAuth(true);
       this.setUser(res.data.user);
       window.open("http://localhost:3000/user/" + this.user, "_self");
@@ -30,6 +32,7 @@ export default class FileStore {
     try {
       const res = await AuthService.singin(username, email, password);
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("nickname", username);
       this.setAuth(true);
       this.setUser(username);
       window.open("http://localhost:3000/user/" + username, "_self");
@@ -42,6 +45,7 @@ export default class FileStore {
     try {
       const res = await AuthService.logout();
       localStorage.removeItem("token");
+      localStorage.removeItem("nickname");
       this.setAuth(false);
       this.setUser({});
       window.open("http://localhost:3000/", "_self");

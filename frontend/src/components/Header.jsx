@@ -2,6 +2,7 @@ import { Link } from "react-router";
 
 function Header(props) {
   const { isLog } = props;
+  const username = localStorage.getItem('nickname');
   return (
     <header>
       <div className="header-container">
@@ -9,7 +10,7 @@ function Header(props) {
           <span>О НАС</span>
         </Link>
         {isLog ? (
-          <Link to="/log-in" className="header_login ">
+          <Link to={"/user/"+username} className="header_login ">
             <div className="header_login-text">
               <span className="white-p">ЛИЧНЫЙ КАБИНЕТ</span>
             </div>
