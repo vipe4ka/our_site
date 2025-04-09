@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.41, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: file_sharing
+-- Host: localhost    Database: file_sharing
 -- ------------------------------------------------------
 -- Server version	8.0.41
 
@@ -35,7 +35,7 @@ CREATE TABLE `download_audit` (
   CONSTRAINT `download_audit_ibfk_1` FOREIGN KEY (`file_id`) REFERENCES `files` (`file_id`),
   CONSTRAINT `download_audit_ibfk_2` FOREIGN KEY (`file_owner_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `download_audit_ibfk_3` FOREIGN KEY (`downloader_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +44,6 @@ CREATE TABLE `download_audit` (
 
 LOCK TABLES `download_audit` WRITE;
 /*!40000 ALTER TABLE `download_audit` DISABLE KEYS */;
-INSERT INTO `download_audit` VALUES (1,1,1,2,'2025-03-27 22:50:41'),(2,2,2,1,'2025-03-27 22:50:41'),(3,3,3,4,'2025-03-27 22:50:41'),(4,4,4,3,'2025-03-27 22:50:41'),(5,5,5,6,'2025-03-27 22:50:41'),(6,6,6,5,'2025-03-27 22:50:41'),(7,7,7,7,'2025-03-27 22:50:41');
 /*!40000 ALTER TABLE `download_audit` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -59,7 +58,7 @@ CREATE TABLE `file_types` (
   `file_type_id` int NOT NULL AUTO_INCREMENT,
   `type_name` varchar(50) NOT NULL,
   PRIMARY KEY (`file_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,7 +67,7 @@ CREATE TABLE `file_types` (
 
 LOCK TABLES `file_types` WRITE;
 /*!40000 ALTER TABLE `file_types` DISABLE KEYS */;
-INSERT INTO `file_types` VALUES (1,'jpg'),(2,'pptx'),(3,'pdf'),(4,'txt'),(5,'mp4'),(6,'xlsx'),(7,'rar');
+INSERT INTO `file_types` VALUES (1,'Picture'),(2,'Microsoft Office'),(3,'PDF'),(4,'TXT'),(5,'Audio'),(6,'Video'),(7,'Archive'),(8,'Executable'),(9,'Other');
 /*!40000 ALTER TABLE `file_types` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -92,7 +91,7 @@ CREATE TABLE `files` (
   KEY `owner_id` (`owner_id`),
   CONSTRAINT `files_ibfk_1` FOREIGN KEY (`file_type_id`) REFERENCES `file_types` (`file_type_id`),
   CONSTRAINT `files_ibfk_2` FOREIGN KEY (`owner_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +100,6 @@ CREATE TABLE `files` (
 
 LOCK TABLES `files` WRITE;
 /*!40000 ALTER TABLE `files` DISABLE KEYS */;
-INSERT INTO `files` VALUES (1,'vacation_photo.jpg',1,2456789,1,'/uploads/1/vacation_photo.jpg','2025-03-27 22:50:41'),(2,'report.pdf',3,1234567,2,'/uploads/2/report.pdf','2025-03-27 22:50:41'),(3,'presentation.pptx',2,3456789,3,'/uploads/3/presentation.pptx','2025-03-27 22:50:41'),(4,'notes.txt',4,1024,4,'/uploads/4/notes.txt','2025-03-27 22:50:41'),(5,'budget.xlsx',6,2345678,5,'/uploads/5/budget.xlsx','2025-03-27 22:50:41'),(6,'movie.mp4',5,123456789,6,'/uploads/7/movie.mp4','2025-03-27 22:50:41'),(7,'project.rar',7,3456789,7,'/uploads/9/project.rar','2025-03-27 22:50:41');
 /*!40000 ALTER TABLE `files` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -116,8 +114,27 @@ SET @saved_cs_client     = @@character_set_client;
 /*!50001 CREATE VIEW `personal_pages_info` AS SELECT 
  1 AS `user_id`,
  1 AS `nickname`,
+ 1 AS `email`,
  1 AS `registration_date`,
  1 AS `files_visibility`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `user_files_info`
+--
+
+DROP TABLE IF EXISTS `user_files_info`;
+/*!50001 DROP VIEW IF EXISTS `user_files_info`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `user_files_info` AS SELECT 
+ 1 AS `user_id`,
+ 1 AS `file_id`,
+ 1 AS `file_name`,
+ 1 AS `file_type`,
+ 1 AS `file_size`,
+ 1 AS `upload_date`,
+ 1 AS `file_path`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -133,12 +150,12 @@ CREATE TABLE `users` (
   `email` varchar(100) NOT NULL,
   `encrypted_password` varchar(255) NOT NULL,
   `registration_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `files_visibility` enum('public','private') DEFAULT 'public',
+  `files_visibility` tinyint(1) DEFAULT '1' COMMENT '0 - private, 1 - public',
   `deletion_date` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `nickname` (`nickname`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -147,13 +164,9 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'petrov_ivan','ivan@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-27 22:50:41','public',NULL),(2,'vasilyeva_anna','anna@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-27 22:50:41','private',NULL),(3,'ivanov_alex','alex@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-27 22:50:41','public',NULL),(4,'kotova_maria','maria@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-27 22:50:41','public',NULL),(5,'zel_ivan','david@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-27 22:50:41','private',NULL),(6,'belolga','olga@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-27 22:50:41','public',NULL),(7,'fedsergey','sergey@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-27 22:50:41','private',NULL),(8,'mih_mih','new_user@example.com','$2a$10$hashedpassword123','2025-03-27 22:50:42','public',NULL);
+INSERT INTO `users` VALUES (1,'petrov_ivan','ivan@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',1,NULL),(2,'vasilyeva_anna','anna@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',0,NULL),(3,'ivanov_alex','alex@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',1,NULL),(4,'kotova_maria','maria@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',1,NULL),(5,'zel_ivan','david@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',0,NULL),(6,'belolga','olga@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',1,NULL),(7,'fedsergey','sergey@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-03-30 15:38:58',0,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping events for database 'file_sharing'
---
 
 --
 -- Dumping routines for database 'file_sharing'
@@ -169,16 +182,15 @@ UNLOCK TABLES;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` FUNCTION `authenticate_user`(
-    p_nickname VARCHAR(50),
-    p_password VARCHAR(255)) RETURNS tinyint(1)
+    p_email VARCHAR(50)) RETURNS varchar(255) CHARSET utf8mb4
     READS SQL DATA
     DETERMINISTIC
 BEGIN
-    RETURN EXISTS (
-        SELECT 1 
+    RETURN (
+        SELECT encrypted_password
         FROM users
-        WHERE nickname = p_nickname 
-        AND encrypted_password = p_password);
+        WHERE email = p_email
+	);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -289,8 +301,8 @@ BEGIN
         SELECT 'Error: User with this nickname or email already exists' AS message;
     ELSE
         -- Добавление нового пользователя
-        INSERT INTO users (nickname, email, encrypted_password, registration_date, files_visibility)
-        VALUES (p_nickname, p_email, p_password, CURRENT_TIMESTAMP, 'public');
+        INSERT INTO users (nickname, email, encrypted_password, registration_date)
+        VALUES (p_nickname, p_email, p_password, CURRENT_TIMESTAMP);
         -- Возвращаем информацию о добавленном пользователе
         SELECT 'User successfully added' AS message, user_id, nickname, email, registration_date
         FROM users
@@ -316,7 +328,25 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `personal_pages_info` AS select `users`.`user_id` AS `user_id`,`users`.`nickname` AS `nickname`,`users`.`registration_date` AS `registration_date`,`users`.`files_visibility` AS `files_visibility` from `users` group by `users`.`user_id` */;
+/*!50001 VIEW `personal_pages_info` AS select `users`.`user_id` AS `user_id`,`users`.`nickname` AS `nickname`,`users`.`email` AS `email`,`users`.`registration_date` AS `registration_date`,`users`.`files_visibility` AS `files_visibility` from `users` where (`users`.`deletion_date` is null) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `user_files_info`
+--
+
+/*!50001 DROP VIEW IF EXISTS `user_files_info`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `user_files_info` AS select `f`.`owner_id` AS `user_id`,`f`.`file_id` AS `file_id`,`f`.`file_name` AS `file_name`,`ft`.`type_name` AS `file_type`,`f`.`file_size` AS `file_size`,`f`.`upload_date` AS `upload_date`,`f`.`file_path` AS `file_path` from (`files` `f` join `file_types` `ft` on((`f`.`file_type_id` = `ft`.`file_type_id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -330,4 +360,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-27 22:54:53
+-- Dump completed on 2025-03-30 15:40:02

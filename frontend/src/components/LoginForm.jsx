@@ -4,7 +4,7 @@ import { Context } from "../index";
 import BrandName from "./ common/BrandName";
 export default function LoginForm(props) {
   const { isRegist } = props;
-  const [usname, setUsname] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { store } = useContext(Context);
@@ -40,10 +40,10 @@ export default function LoginForm(props) {
         <div className="form-container">
           {isRegist && (
             <div className="form-item">
-              <p className="form-text">ФИО</p>
+              <p className="form-text">Логин</p>
               <input
-                onChange={(e) => setUsname(e.target.value)}
-                value={usname}
+                onChange={(e) => setUsername(e.target.value)}
+                value={username}
                 type="text"
                 placeholder=""
               />
@@ -71,9 +71,15 @@ export default function LoginForm(props) {
             mode={"small-button"}
             content={isRegist ? "Зарегистрироваться" : "Войти"}
             handle={() => {
-              isRegist
-                ? store.singin(usname, email, password)
-                : store.login(email, password);
+              if (isRegist) {
+                [username, email, password].filter(Boolean).length === 3
+                  ? store.singin(username, email, password)
+                  : alert("Заполните все поля формы");
+              } else {
+                [email, password].filter(Boolean).length === 2
+                  ? store.login(email, password)
+                  : alert("Заполните все поля формы");
+              }
             }}
           />
         </div>
