@@ -2,7 +2,7 @@ import express from "express";
 import { routerAuth, routerUser } from "./authRouter.js";
 import cors from "cors";
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5000;//8000
 
 app.use(express.json());
 // Настройка CORS

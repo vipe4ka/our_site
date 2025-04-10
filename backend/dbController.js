@@ -7,7 +7,7 @@ export class DbController {
         this.connection = await mysql.createConnection({
                     host: "localhost",      // Адрес сервера MySQL
                     user: "root",  // Имя пользователя MySQL
-                    password: "root",  // Пароль пользователя MySQL
+                    password: "root",  // Пароль пользователя MySQL /(your_secure_password)
                     database: "fileserver"  // Название базы данных
                 });
     }
