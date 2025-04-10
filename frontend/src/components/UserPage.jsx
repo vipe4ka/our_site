@@ -9,22 +9,44 @@ import OtherPage from "./OtherPage";
 import { Context } from "../index";
 
 export default function UserPage() {
-  const { nickname } = useParams();
   const [userData, setUserData] = useState(null);
-  const store = useContext(Context);
+  const [loading, setLoading] = useState(true);
+  const { store } = useContext(Context);
+  const { nickname } = useParams();
 
   useEffect(() => {
     async function fetchUserData() {
       try {
         const response = await UserService.usersRequest(nickname);
         setUserData(response.data);
+        setLoading(false);
       } catch (error) {
         console.error("Ошибка при получении данных пользователя:", error);
+        setLoading(false);
       }
     }
 
     fetchUserData();
-  }, [nickname]); 
+  }, [nickname]);
+
+  if (loading) {
+    return (
+      <div
+        className="wave-bouncing-loading-animation"
+        role="alert"
+        aria-busy="true"
+        aria-label="Loading"
+      >
+        <span style={{ "--item": 1 }}>L</span>
+        <span style={{ "--item": 2 }}>O</span>
+        <span style={{ "--item": 3 }}>A</span>
+        <span style={{ "--item": 4 }}>D</span>
+        <span style={{ "--item": 5 }}>I</span>
+        <span style={{ "--item": 6 }}>N</span>
+        <span style={{ "--item": 7 }}>G</span>
+      </div>
+    );
+  }
 
   if (!userData) {
     return <NotFound />;
@@ -53,7 +75,7 @@ export default function UserPage() {
             </div>
           </Link>
         </div>
-      </header>{" "}
+      </header>
       <div className="block-file-container">
         <BrandName theme={"dark"} />
       </div>
@@ -61,7 +83,7 @@ export default function UserPage() {
         <div className="user-container">
           <img className="user-icon" src="/pictures/face.png" alt="face"></img>
           <div className="user-header">
-            <p className="main-text-header">{nickname.toUpperCase()}</p>
+            <p className="main-text-header">{store.user.toUpperCase()}</p>
             <Link to="/edit" className="header_login invert">
               <div className="header_login-text">
                 <span className="white-p">Редактировать профиль</span>
@@ -82,4 +104,4 @@ export default function UserPage() {
       <GreenButton mode={"small-button share-btn"} content={"Поделиться"} />
     </>
   );
-};
+}

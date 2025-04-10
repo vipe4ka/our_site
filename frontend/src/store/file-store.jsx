@@ -2,11 +2,13 @@ import { makeAutoObservable } from "mobx";
 import AuthService from "../services/AuthService";
 
 export default class FileStore {
-  user = {};
+  user = "";
   isAuth = false;
-  
+
   constructor() {
     makeAutoObservable(this);
+    this.isAuth = localStorage.getItem("isAuth") === "true";
+    this.user = localStorage.getItem("nickname") || "";
   }
   setAuth(value) {
     this.isAuth = value;
@@ -18,10 +20,11 @@ export default class FileStore {
     try {
       const res = await AuthService.login(email, password);
       console.log(res);
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("nickname", this.user.username);
       this.setAuth(true);
       this.setUser(res.data.user);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("nickname", this.user);
+      localStorage.setItem("isAuth", true);
       window.open("http://localhost:3000/user/" + this.user, "_self");
     } catch (e) {
       alert("Повторите попытку входа!");
@@ -31,10 +34,11 @@ export default class FileStore {
   async singin(username, email, password) {
     try {
       const res = await AuthService.singin(username, email, password);
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("nickname", username);
       this.setAuth(true);
       this.setUser(username);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("nickname", username);
+      localStorage.setItem("isAuth", true);
       window.open("http://localhost:3000/user/" + username, "_self");
     } catch (e) {
       alert("Ошибка регистрации!");
@@ -43,15 +47,14 @@ export default class FileStore {
   }
   async logout() {
     try {
-      const res = await AuthService.logout();
+      this.setAuth(false);
+      this.setUser("");
       localStorage.removeItem("token");
       localStorage.removeItem("nickname");
-      this.setAuth(false);
-      this.setUser({});
+      localStorage.setItem("isAuth", false);
       window.open("http://localhost:3000/", "_self");
     } catch (e) {
       alert("При выходе возникла ошибка!");
-      console.log(e.res.data.message);
     }
   }
 }

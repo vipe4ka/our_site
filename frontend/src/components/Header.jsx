@@ -1,8 +1,10 @@
 import { Link } from "react-router";
-
+import { Context } from "..";
+import { useContext } from "react";
 function Header(props) {
   const { isLog } = props;
-  const username = localStorage.getItem('nickname');
+  const { store } = useContext(Context);
+
   return (
     <header>
       <div className="header-container">
@@ -10,7 +12,7 @@ function Header(props) {
           <span>О НАС</span>
         </Link>
         {isLog ? (
-          <Link to={"/user/"+username} className="header_login ">
+          <Link to={"/user/"+ store.user} className="header_login ">
             <div className="header_login-text">
               <span className="white-p">ЛИЧНЫЙ КАБИНЕТ</span>
             </div>

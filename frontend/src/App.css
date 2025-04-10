@@ -14,6 +14,30 @@
   font-family: "Radiotehnika";
   src: url("../public/fonts/ofont.ru_Radiotechnika.ttf");
 }
+.wave-bouncing-loading-animation{
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: min(60px,6vw);
+    color: black;
+    -webkit-box-reflect: below -0.4em linear-gradient(transparent, #00000045);
+    font-family:"Nico-Moji";
+}
+.wave-bouncing-loading-animation > span {
+    display: inline-block;
+    font-weight: bolder;
+    animation: bouncing-wave-animation 2s infinite;
+    animation-delay: calc(.25s * var(--item));
+}
+@keyframes bouncing-wave-animation {
+    0%, 40%, 100% {
+        transform: translateY(0);
+    }
+    20% {
+        transform: translateY(-0.4em);
+    }
+}
 .App {
   padding: 50px 80px;
   margin: 0%;
@@ -331,13 +355,20 @@ button {
 }
 .other-header .main-text-header {
   position: relative;
-  top: 40px;
   right: 20px;
-  width: 575px;
+  width: fit-content;
+}
+.other-check-text-container{
+  display: flex;
+    flex-direction: row;
+    gap: 25px;
+    position: relative;
+    bottom: 55px;
+    align-items: center;
 }
 .user-file-icon {
-  position: relative;
-  right: 104px;
+  position: absolute;
+  left: 678px;
   bottom: 50px;
   border-radius: 0 0 80px 0;
 }

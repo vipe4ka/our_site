@@ -6,7 +6,7 @@ import { Context } from "../index";
 
 export default function MainPage() {
 
-  const store = useContext(Context)
+  const { store } = useContext(Context)
   const fileInputRef = useRef(null);
 
   const handleFileChange = (event) => {
@@ -17,7 +17,9 @@ export default function MainPage() {
   };
 
   const handleButtonClick = () => {
-    fileInputRef.current.click();
+    store.isAuth ? 
+    fileInputRef.current.click() : 
+    window.open("http://localhost:3000/log-in/", "_self");
   };
 
   return (

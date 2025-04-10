@@ -8,7 +8,7 @@ export default function LoginForm(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { store } = useContext(Context);
-  
+
   return (
     <>
       <BrandName theme={"light"} />
@@ -71,9 +71,15 @@ export default function LoginForm(props) {
             mode={"small-button"}
             content={isRegist ? "Зарегистрироваться" : "Войти"}
             handle={() => {
-              isRegist
-                ? store.singin(username, email, password)
-                : store.login(email, password);
+              if (isRegist) {
+                [username, email, password].filter(Boolean).length === 3
+                  ? store.singin(username, email, password)
+                  : alert("Заполните все поля формы");
+              } else {
+                [email, password].filter(Boolean).length === 2
+                  ? store.login(email, password)
+                  : alert("Заполните все поля формы");
+              }
             }}
           />
         </div>
