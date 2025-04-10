@@ -1,4 +1,5 @@
 import express from "express";
+import fileUpload from "express-fileupload";
 import { routerAuth, routerUser } from "./authRouter.js";
 import cors from "cors";
 const app = express();
@@ -12,7 +13,7 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"], // Разрешенные заголовки
     credentials: true // Разрешает передачу куки и авторизационных данных
 }));
-
+app.use(fileUpload());
 app.use("/auth", routerAuth);
 app.use("/user", routerUser);
 

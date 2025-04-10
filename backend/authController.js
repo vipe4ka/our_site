@@ -1,6 +1,14 @@
 import { dbController } from "./dbController.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import path from "path";
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// Получение текущей директории
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 // Количество раундов соления
 const saltRounds = 10;
 
@@ -23,6 +31,8 @@ export class Controller {
         this.login = this.login.bind(this);
         this.getUser = this.getUser.bind(this);
         this.registration = this.registration.bind(this);
+        this.loadFile = this.loadFile.bind(this);
+        this.checkToken = this.checkToken.bind(this);
     }
     
     generateToken(username) {
@@ -31,7 +41,23 @@ export class Controller {
         const options = { expiresIn: '1h' }; // срок действия токена (в данном случае 1 час)
       
         return jwt.sign(payload, secretKey, options);
-      }
+    }
+
+    checkToken(authHeader, user) {
+        const token = authHeader && authHeader.split(' ')[1];
+    
+        if (token === "null")
+            return null;
+        try {
+            const decoded = jwt.verify(token, this.seckret_key);
+            if (decoded.username === user) {
+                return true;
+            }
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
 
     // Регистрация
     async registration(req, res) {
@@ -92,19 +118,50 @@ export class Controller {
             return res.status(400).json({message: "Такого пользователя нет"});
         }
         const authHeader = req.headers["authorization"];
-        const token = authHeader && authHeader.split(' ')[1];
+        
+        const result = this.checkToken(authHeader, user);
     
-        if (token === "null")
+        if (result === null) {
             return res.status(200).send({ message: "Только чтение, ты не авторизован", isItYou: false });
-    
-        try {
-            const decoded = jwt.verify(token, this.seckret_key);
-            if (decoded.username === user) {
-                return res.status(200).send({ message: "Это ты тот самый", isItYou: true});
-            }
-            return res.status(200).send({ message: "Ты не тот самый, смотри", isItYou: false});
-        } catch (error) {
-            return res.status(403).send({ error: 'Invalid or expired token' });
+        } 
+        if (result) {
+            return res.status(200).send({ message: "Это ты тот самый", isItYou: true});
         }
+        return res.status(200).send({ message: "Ты не тот самый, смотри", isItYou: false});
+    };
+
+    // Загружаем файл пользователя
+    async loadFile(req, res) {
+        if (!req.files || Object.keys(req.files).length === 0) {
+            return res.status(400).send('No files were uploaded.');
+          }
+        const { user } = req.params;
+        // Ищем есть ли пользователь с таким логином
+        const isExistsName = await dbController.uniqueNickname(user);
+        if (!isExistsName) {
+            return res.status(400).json({message: "Такого пользователя нет"});
+        }
+        const authHeader = req.headers["authorization"];
+        const result = this.checkToken(authHeader, user);
+    
+        if (result === null) {
+            return res.status(400).send({ message: "Нет токена" });
+        }
+        if (!result) {
+            return res.status(400).send({ message: "Это не ты тот самый"});
+        }
+    
+        // Получаем файл из поля 'file'
+        const file = req.files.file;
+
+        // Сохраняем файл в директорию 'uploads'
+        const pathToMoveFile = path.join(__dirname, `uploads/${user}/${file.name}`);
+        file.mv(pathToMoveFile, async (err) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            await dbController.addNewFileToUser(file.name, user);
+            return res.status(200).send({ message: "Ты ты тот самый, молодец. Файл загружен"});
+        });
     };
 }

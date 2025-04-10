@@ -3,16 +3,23 @@ import Header from "./Header";
 import GreenButton from "./ common/GreenButton";
 import BrandName from "./ common/BrandName";
 import { Context } from "../index";
+import UserService from "../services/UserService";
 
 export default function MainPage() {
 
   const { store } = useContext(Context)
   const fileInputRef = useRef(null);
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       console.log("Выбран файл:", file.name);
+      const response = await UserService.loadRequest(store.user, file);
+      if (response.status === 200) {
+        alert("Всё гуд!");
+      } else {
+        alert("Всё плохо!");
+      }
     }
   };
 

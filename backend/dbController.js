@@ -51,6 +51,15 @@ export class DbController {
             throw error;
         }
     }
+
+    async addNewFileToUser(file_name, owner_username) {
+        try {
+            await this.connection.execute(`INSERT INTO files (file_name, owner_username) VALUES (?, ?);`, [file_name, owner_username]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 // База данных

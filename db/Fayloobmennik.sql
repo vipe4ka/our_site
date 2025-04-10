@@ -2,12 +2,6 @@
 CREATE DATABASE IF NOT EXISTS fileserver;
 USE fileserver;
 
--- Таблица типов файлов
-CREATE TABLE file_types (
-    file_type_id INT AUTO_INCREMENT PRIMARY KEY,
-    type_name VARCHAR(50) NOT NULL
-);
-
 -- Таблица пользователей
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -23,13 +17,9 @@ CREATE TABLE users (
 CREATE TABLE files (
     file_id INT AUTO_INCREMENT PRIMARY KEY,
     file_name VARCHAR(255) NOT NULL,
-    file_type_id INT NOT NULL,
-    file_size BIGINT NOT NULL,
-    owner_id INT NOT NULL,
-    file_path VARCHAR(512) NOT NULL,
+    owner_username VARCHAR(50) NOT NULL,
     upload_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (file_type_id) REFERENCES file_types(file_type_id),
-    FOREIGN KEY (owner_id) REFERENCES users(user_id)
+    FOREIGN KEY (owner_username) REFERENCES users(nickname)
 );
 
 -- Таблица аудита скачиваний (с информацией о владельце и скачивающем)
@@ -61,12 +51,8 @@ SELECT
     f.owner_id AS user_id,
     f.file_id,
     f.file_name,
-    ft.type_name AS file_type,
-    f.file_size,
-    f.upload_date,
-    f.file_path
-FROM files f
-JOIN file_types ft ON f.file_type_id = ft.file_type_id;
+    f.upload_date
+FROM files f;
 
 -- Функция проверки доверенного источника
 DELIMITER //
@@ -82,17 +68,6 @@ BEGIN
     );
 END //
 DELIMITER ;
-
-INSERT INTO file_types (type_name) VALUES
-('Picture'),
-('Microsoft Office'),
-('PDF'),
-('TXT'),
-('Audio'),
-('Video'),
-('Archive'),
-('Executable'),
-('Other');
 
 INSERT INTO users (nickname, email, encrypted_password, registration_date, files_visibility) VALUES
 ('petrov_ivan', 'ivan@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 1),
