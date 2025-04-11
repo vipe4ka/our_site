@@ -60,6 +60,15 @@ export class DbController {
             throw error;
         }
     }
+
+    async getAllUsernames() {
+        try {
+            const [result] = await this.connection.execute(`SELECT nickname from users`);
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 // База данных

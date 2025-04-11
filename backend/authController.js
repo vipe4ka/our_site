@@ -164,4 +164,10 @@ export class Controller {
             return res.status(200).send({ message: "Ты ты тот самый, молодец. Файл загружен"});
         });
     };
+
+    // Возвращаем список всех пользователей
+    async getUsers(req, res) {
+        const users = await dbController.getAllUsernames();
+        return res.status(200).send({ users: users.map(user => user.nickname)});
+    };
 }
