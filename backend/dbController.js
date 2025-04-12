@@ -61,6 +61,16 @@ export class DbController {
         }
     }
 
+    // Выдаем файлы юзера
+    async getUserFiles(username, withInvisible=false) {
+        try {
+            const [result] = await this.connection.execute(`CALL get_files_by_user(?, ?)`, [username, withInvisible]);
+            return result[0];
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async getAllUsernames() {
         try {
             const [result] = await this.connection.execute(`SELECT nickname from users`);

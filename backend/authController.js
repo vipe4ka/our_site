@@ -2,7 +2,7 @@ import { dbController } from "./dbController.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import path from "path";
-
+import fs from "fs";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
@@ -119,15 +119,18 @@ export class Controller {
         }
         const authHeader = req.headers["authorization"];
         
-        const result = this.checkToken(authHeader, user);
+        const authResult = this.checkToken(authHeader, user);
     
-        if (result === null) {
-            return res.status(200).send({ message: "Только чтение, ты не авторизован", isItYou: false });
+        if (authResult === null) {
+            const files = await dbController.getUserFiles(user, true);
+            return res.status(200).send({ message: "Только чтение, ты не авторизован", isItYou: false, files});
         } 
-        if (result) {
-            return res.status(200).send({ message: "Это ты тот самый", isItYou: true});
+        if (authResult) {
+            const files = await dbController.getUserFiles(user, true);
+            return res.status(200).send({ message: "Это ты тот самый", isItYou: true, files});
         }
-        return res.status(200).send({ message: "Ты не тот самый, смотри", isItYou: false});
+        const files = await dbController.getUserFiles(user, true);
+        return res.status(200).send({ message: "Ты не тот самый, смотри", isItYou: false, files});
     };
 
     // Загружаем файл пользователя
@@ -153,9 +156,19 @@ export class Controller {
     
         // Получаем файл из поля 'file'
         const file = req.files.file;
-
+        // Каталог пользователя
+        const userPath = path.join(__dirname, `uploads/${user}`);
+        if (!fs.existsSync(userPath)) {
+            try {
+                fs.mkdirSync(userPath);
+                console.log("Каталог успешно создан.");
+            } catch (err) {
+                console.error("Ошибка при создании каталога:", err);
+                return res.status(500).send(err);
+            }
+        }
         // Сохраняем файл в директорию 'uploads'
-        const pathToMoveFile = path.join(__dirname, `uploads/${user}/${file.name}`);
+        const pathToMoveFile = path.join(userPath, `${file.name}`);
         file.mv(pathToMoveFile, async (err) => {
             if (err) {
                 return res.status(500).send(err);
