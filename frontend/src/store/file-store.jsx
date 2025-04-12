@@ -7,8 +7,8 @@ export default class FileStore {
 
   constructor() {
     makeAutoObservable(this);
-    this.isAuth = localStorage.getItem("isAuth") === "true";
-    this.user = localStorage.getItem("nickname") || "";
+    this.isAuth = sessionStorage.getItem("isAuth") === "true";
+    this.user = sessionStorage.getItem("nickname") || "";
   }
   setAuth(value) {
     this.isAuth = value;
@@ -22,9 +22,9 @@ export default class FileStore {
       console.log(res);
       this.setAuth(true);
       this.setUser(res.data.user);
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("nickname", this.user);
-      localStorage.setItem("isAuth", true);
+      sessionStorage.setItem("token", res.data.token);
+      sessionStorage.setItem("nickname", this.user);
+      sessionStorage.setItem("isAuth", true);
       window.open("http://localhost:3000/user/" + this.user, "_self");
     } catch (e) {
       alert("Повторите попытку входа!");
@@ -36,9 +36,9 @@ export default class FileStore {
       const res = await AuthService.singin(username, email, password);
       this.setAuth(true);
       this.setUser(username);
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("nickname", username);
-      localStorage.setItem("isAuth", true);
+      sessionStorage.setItem("token", res.data.token);
+      sessionStorage.setItem("nickname", username);
+      sessionStorage.setItem("isAuth", true);
       window.open("http://localhost:3000/user/" + username, "_self");
     } catch (e) {
       alert("Ошибка регистрации!");
@@ -49,9 +49,9 @@ export default class FileStore {
     try {
       this.setAuth(false);
       this.setUser("");
-      localStorage.removeItem("token");
-      localStorage.removeItem("nickname");
-      localStorage.setItem("isAuth", false);
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("nickname");
+      sessionStorage.setItem("isAuth", false);
       window.open("http://localhost:3000/", "_self");
     } catch (e) {
       alert("При выходе возникла ошибка!");

@@ -2,10 +2,12 @@ import BrandName from "./ common/BrandName";
 import GreenButton from "./ common/GreenButton";
 import NotFound from "./NotFound";
 import UserService from "../services/UserService";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useRef, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router";
 import OtherPage from "./OtherPage";
+import Loading from "./ common/Loading";
+import FileList from "./FileList";
 import { Context } from "../index";
 
 export default function UserPage() {
@@ -13,6 +15,25 @@ export default function UserPage() {
   const [loading, setLoading] = useState(true);
   const { store } = useContext(Context);
   const { nickname } = useParams();
+ const fileInputRef = useRef(null);
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      console.log("Выбран файл:", file.name);
+      const response = await UserService.loadRequest(nickname, file);
+      if (response.status === 200) {
+        alert("Всё гуд!");
+      } else {
+        alert("Всё плохо!");
+      }
+    }
+  };
+  const handleButtonClick = () => {
+    store.isAuth ? 
+    fileInputRef.current.click() : 
+    window.open("http://localhost:3000/log-in/", "_self");
+  };
 
   useEffect(() => {
     async function fetchUserData() {
@@ -31,20 +52,7 @@ export default function UserPage() {
 
   if (loading) {
     return (
-      <div
-        className="wave-bouncing-loading-animation"
-        role="alert"
-        aria-busy="true"
-        aria-label="Loading"
-      >
-        <span style={{ "--item": 1 }}>L</span>
-        <span style={{ "--item": 2 }}>O</span>
-        <span style={{ "--item": 3 }}>A</span>
-        <span style={{ "--item": 4 }}>D</span>
-        <span style={{ "--item": 5 }}>I</span>
-        <span style={{ "--item": 6 }}>N</span>
-        <span style={{ "--item": 7 }}>G</span>
-      </div>
+     <Loading/>
     );
   }
 
@@ -62,6 +70,9 @@ export default function UserPage() {
           <Link to="/about" className="header_item ">
             <span>О НАС</span>
           </Link>
+          <Link to="/user" className="header_item ">
+              <span>ПОЛЬЗОВАТЕЛИ</span>
+            </Link>
           <Link
             to="/"
             className="header_login "
@@ -93,15 +104,22 @@ export default function UserPage() {
         </div>
         <div className="user-content-container">
           <p>Список файлов:</p>
-          <div className="toggle-btn">
-            <input type="checkbox" id="toggle-btn" />
-            <label for="toggle-btn"></label>
-          </div>
         </div>
-
-        <div className="user-content"></div>
+        <div className="user-content">
+          <FileList/>
+        </div>
       </div>
-      <GreenButton mode={"small-button share-btn"} content={"Поделиться"} />
+      <div className="user-button-container">
+        <GreenButton mode={"small-button"} content={"Скачать"} />
+        <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+            multiple
+          />
+        <GreenButton mode={"small-button"} handle={handleButtonClick} content={"Поделиться"} />
+      </div>
     </>
   );
 }

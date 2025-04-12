@@ -3,6 +3,7 @@ import BrandName from "./ common/BrandName";
 import GreenButton from "./ common/GreenButton";
 import { Context } from "..";
 import { useContext } from "react";
+import FileList from "./FileList";
 export default function OtherPage(props) {
 
     const { store } = useContext(Context);
@@ -33,7 +34,9 @@ export default function OtherPage(props) {
           <p>Список файлов:</p>
         </div>
 
-        <div className="user-content"></div>
+        <div className="user-content">
+          <FileList/>
+        </div>
       </div>
       <GreenButton mode={"small-button share-btn"} content={"Скачать"} />
     </>
