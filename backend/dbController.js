@@ -71,9 +71,10 @@ export class DbController {
         }
     }
 
-    async getAllUsernames() {
+    // Выдаем имена юзеров с количеством файлов
+    async getAllUsernamesWithFilecounts() {
         try {
-            const [result] = await this.connection.execute(`SELECT nickname from users`);
+            const [result] = await this.connection.execute(`SELECT owner_username as nickname, count(*) as fcounts from files where file_visibility = 1 group by owner_username`);
             return result;
         } catch (error) {
             throw error;

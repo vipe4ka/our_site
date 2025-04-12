@@ -51,11 +51,11 @@ export class Controller {
         try {
             const decoded = jwt.verify(token, this.seckret_key);
             if (decoded.username === user) {
-                return true;
+                return {result: true};
             }
             return false;
         } catch (error) {
-            return false;
+            return {result: false, error};
         }
     }
 
@@ -125,11 +125,14 @@ export class Controller {
             const files = await dbController.getUserFiles(user, true);
             return res.status(200).send({ message: "Только чтение, ты не авторизован", isItYou: false, files});
         } 
-        if (authResult) {
+        if (authResult.result) {
             const files = await dbController.getUserFiles(user, true);
             return res.status(200).send({ message: "Это ты тот самый", isItYou: true, files});
         }
         const files = await dbController.getUserFiles(user, true);
+        if (authResult.error) {
+            return res.status(500).send({ error: authResult.error});    
+        }
         return res.status(200).send({ message: "Ты не тот самый, смотри", isItYou: false, files});
     };
 
@@ -180,7 +183,7 @@ export class Controller {
 
     // Возвращаем список всех пользователей
     async getUsers(req, res) {
-        const users = await dbController.getAllUsernames();
-        return res.status(200).send({ users: users.map(user => user.nickname)});
+        const users = await dbController.getAllUsernamesWithFilecounts();
+        return res.status(200).send({ users });
     };
 }
