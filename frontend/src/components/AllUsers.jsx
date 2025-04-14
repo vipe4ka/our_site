@@ -6,6 +6,7 @@ import { Context } from "..";
 import NotFound from "./NotFound";
 import CardItem from "./ common/cardItem";
 import { Link } from "react-router";
+import BrandName from "./ common/BrandName";
 export default function AllUsers() {
   const [usersData, setUsersData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,7 +17,7 @@ export default function AllUsers() {
         const response = await UserService.getUsers();
         setUsersData(
           response.data.users.filter(
-            (nickname) => nickname !== sessionStorage.getItem("nickname")
+            (user) => user.nickname !== sessionStorage.getItem("nickname")
           )
         );
         setLoading(false);
@@ -37,12 +38,15 @@ export default function AllUsers() {
   }
   return (
     <>
+    <div className="all-header-container">
+      <BrandName theme={"light"}/>
       <Header isLog={store.isAuth} />
+    </div>
       <div className="card-user-container">
         {usersData.map((item) => {
           return (
-            <Link to={`/user/${item}`}>
-              <CardItem nickname={item} fcount={50} />
+            <Link to={`/user/${item.nickname}`}>
+              <CardItem nickname={item.nickname} fcount={item.fcount} />
             </Link>
           );
         })}

@@ -449,11 +449,16 @@ button {
   top: 60px;
   left: 60px;
 }
-.card-top{
+.card-top {
   position: relative;
   width: 160px;
   height: 40px;
   background-color: #212121;
   bottom: 35px;
   border-radius: 25px 25px 0px 0px;
+}
+.all-header-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
