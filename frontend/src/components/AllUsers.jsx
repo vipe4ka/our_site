@@ -46,7 +46,7 @@ export default function AllUsers() {
         {usersData.map((item) => {
           return (
             <Link to={`/user/${item.nickname}`}>
-              <CardItem nickname={item.nickname} fcount={item.fcount} />
+              <CardItem nickname={item.nickname} fcount={item.fcounts} />
             </Link>
           );
         })}

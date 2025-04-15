@@ -2,7 +2,7 @@ import BrandName from "./ common/BrandName";
 import GreenButton from "./ common/GreenButton";
 import NotFound from "./NotFound";
 import UserService from "../services/UserService";
-import { useContext, useRef, useEffect, useState } from "react";
+import { useContext, useRef, useEffect, useState, use } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router";
 import OtherPage from "./OtherPage";
@@ -15,13 +15,15 @@ export default function UserPage() {
   const [loading, setLoading] = useState(true);
   const { store } = useContext(Context);
   const { nickname } = useParams();
- const fileInputRef = useRef(null);
+  const [update, setUpdate] = useState(null);
+  const fileInputRef = useRef(null);
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       console.log("Выбран файл:", file.name);
       const response = await UserService.loadRequest(nickname, file);
+      setUpdate(Math.random());
       if (response.status === 200) {
         alert("Всё гуд!");
       } else {
@@ -30,9 +32,9 @@ export default function UserPage() {
     }
   };
   const handleButtonClick = () => {
-    store.isAuth ? 
-    fileInputRef.current.click() : 
-    window.open("http://localhost:3000/log-in/", "_self");
+    store.isAuth
+      ? fileInputRef.current.click()
+      : window.open("http://localhost:3000/log-in/", "_self");
   };
 
   useEffect(() => {
@@ -48,12 +50,10 @@ export default function UserPage() {
     }
 
     fetchUserData();
-  }, [nickname]);
+  }, [nickname, update]);
 
   if (loading) {
-    return (
-     <Loading/>
-    );
+    return <Loading />;
   }
 
   if (!userData) {
@@ -61,7 +61,13 @@ export default function UserPage() {
   }
 
   if (!userData.isItYou) {
-    return <OtherPage name={nickname} />;
+    return (
+      <OtherPage
+        name={nickname}
+        f_list={userData.files}
+        setUpdate={setUpdate}
+      />
+    );
   }
   return (
     <>
@@ -71,8 +77,8 @@ export default function UserPage() {
             <span>О НАС</span>
           </Link>
           <Link to="/user" className="header_item ">
-              <span>ПОЛЬЗОВАТЕЛИ</span>
-            </Link>
+            <span>ПОЛЬЗОВАТЕЛИ</span>
+          </Link>
           <Link
             to="/"
             className="header_login "
@@ -106,19 +112,27 @@ export default function UserPage() {
           <p>Список файлов:</p>
         </div>
         <div className="user-content">
-          <FileList/>
+          <FileList
+            isYou={true}
+            f_list={userData.files}
+            setUpdate={setUpdate}
+          />
         </div>
       </div>
       <div className="user-button-container">
         <GreenButton mode={"small-button"} content={"Скачать"} />
         <input
-            type="file"
-            ref={fileInputRef}
-            style={{ display: "none" }}
-            onChange={handleFileChange}
-            multiple
-          />
-        <GreenButton mode={"small-button"} handle={handleButtonClick} content={"Поделиться"} />
+          type="file"
+          ref={fileInputRef}
+          style={{ display: "none" }}
+          onChange={handleFileChange}
+          multiple
+        />
+        <GreenButton
+          mode={"small-button"}
+          handle={handleButtonClick}
+          content={"Поделиться"}
+        />
       </div>
     </>
   );

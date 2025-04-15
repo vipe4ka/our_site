@@ -340,6 +340,8 @@ button {
   background-color: black;
   left: 345px;
   top: 40px;
+  overflow: auto;
+  direction: rtl;
 }
 .user-button-container {
   display: flex;
@@ -461,4 +463,39 @@ button {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+.file-list{
+  color:white;
+  display: flex;
+  flex-direction: column;
+  gap:10px;
+  padding: 20px;
+  direction: ltr;
+}
+.file-conteiner{
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
+}
+.file-buttons{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+}
+.file-buttons img{
+  width: 32px;
+  height: 32px;
+}
+input[type="checkbox"]{
+  width: 20px;
+  height: 20px;
+}
+.file-name{
+  width: fit-content;
+  height: auto;
+}
+.file-name:hover{
+  cursor: pointer;
 }

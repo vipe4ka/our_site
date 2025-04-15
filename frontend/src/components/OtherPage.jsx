@@ -35,7 +35,7 @@ export default function OtherPage(props) {
         </div>
 
         <div className="user-content">
-          <FileList/>
+          <FileList isYou={false} f_list={props.f_list}/>
         </div>
       </div>
       <GreenButton mode={"small-button share-btn"} content={"Скачать"} />

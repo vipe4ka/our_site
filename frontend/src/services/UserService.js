@@ -13,7 +13,7 @@ export default class UserService {
     formData.append('file', file);
     return $api.post(`/user/${username}/loadFile`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data; charset=UTF-8'
       }
     });
   }
