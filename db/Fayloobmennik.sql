@@ -167,3 +167,42 @@ BEGIN
       AND file_visibility in (1, !withInvisible);
 END //
 DELIMITER ;
+
+-- Функция удаления файла по id
+DROP FUNCTION IF EXISTS del_file_by_id;
+DELIMITER //
+CREATE FUNCTION del_file_by_id(
+    _file_id INT
+) RETURNS VARCHAR(255)
+DETERMINISTIC
+READS SQL DATA
+BEGIN
+    DECLARE file_name_var VARCHAR(255);
+    DECLARE rows_affected INT;
+    
+    -- Получаем имя файла по ID
+    SELECT file_name INTO file_name_var 
+    FROM files 
+    WHERE file_id = _file_id
+    LIMIT 1;
+    
+    -- Проверяем, найден ли файл
+    IF file_name_var IS NULL THEN
+        RETURN NULL;
+    END IF;
+    
+    -- Удаляем файл из таблицы
+    DELETE FROM files 
+    WHERE file_id = _file_id;
+    
+    -- Проверяем, что запись действительно удалена
+    SET rows_affected = ROW_COUNT();
+    
+    IF rows_affected = 0 THEN
+        RETURN NULL;
+    END IF;
+    
+    -- Возвращаем имя удаленного файла
+    RETURN file_name_var;
+END //
+DELIMITER ;

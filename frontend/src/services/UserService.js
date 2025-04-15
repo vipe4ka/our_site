@@ -4,6 +4,7 @@ export default class UserService {
   static usersRequest(username) {
     return $api.get(`/user/${username}`);
   }
+  
   static getUsers() {
     return $api.get(`/user/getUsers`);
   }
@@ -17,4 +18,9 @@ export default class UserService {
       }
     });
   }
+
+  static deleteRequest(username, fileId) {
+    return $api.delete(`/user/${username}/deleteFile?fileId=${fileId}`);
+  }
+
 }

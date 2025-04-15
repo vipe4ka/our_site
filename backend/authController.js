@@ -33,6 +33,7 @@ export class Controller {
         this.registration = this.registration.bind(this);
         this.loadFile = this.loadFile.bind(this);
         this.checkToken = this.checkToken.bind(this);
+        this.deleteFile = this.deleteFile.bind(this);
     }
     
     generateToken(username) {
@@ -136,11 +137,7 @@ export class Controller {
         return res.status(200).send({ message: "Ты не тот самый, смотри", isItYou: false, files});
     };
 
-    // Загружаем файл пользователя
-    async loadFile(req, res) {
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).send('No files were uploaded.');
-          }
+    async checkUserToWorkWithFile(req, res, fileOperation) {
         const { user } = req.params;
         // Ищем есть ли пользователь с таким логином
         const isExistsName = await dbController.uniqueNickname(user);
@@ -151,35 +148,58 @@ export class Controller {
         const result = this.checkToken(authHeader, user);
     
         if (result === null) {
-            return res.status(400).send({ message: "Нет токена" });
+            return res.status(401).send({ message: "Нет токена" });
         }
         if (!result) {
-            return res.status(400).send({ message: "Это не ты тот самый"});
+            return res.status(403).send({ message: "Это не ты тот самый"});
         }
+
+        return fileOperation(user);
+    }
     
-        // Получаем файл из поля 'file'
-        const file = req.files.file;
-        // Каталог пользователя
-        const userPath = path.join(__dirname, `uploads/${user}`);
-        if (!fs.existsSync(userPath)) {
-            try {
-                fs.mkdirSync(userPath);
-                console.log("Каталог успешно создан.");
-            } catch (err) {
-                console.error("Ошибка при создании каталога:", err);
-                return res.status(500).send(err);
-            }
+    // Загружаем файл пользователя
+    async loadFile(req, res) {
+        if (!req.files || Object.keys(req.files).length === 0) {
+            return res.status(400).send('No files were uploaded.');
         }
-        // Сохраняем файл в директорию 'uploads'
-        const pathToMoveFile = path.join(userPath, `${file.name}`);
-        file.mv(pathToMoveFile, async (err) => {
-            if (err) {
-                return res.status(500).send(err);
+        const fileLoadFunc = (user) => {
+            // Получаем файл из поля 'file'
+            const file = req.files.file;
+            // Каталог пользователя
+            const userPath = path.join(__dirname, `uploads/${user}`);
+            if (!fs.existsSync(userPath)) {
+                try {
+                    fs.mkdirSync(userPath);
+                    console.log("Каталог успешно создан.");
+                } catch (err) {
+                    console.error("Ошибка при создании каталога:", err);
+                    return res.status(500).send(err);
+                }
             }
-            await dbController.addNewFileToUser(file.name, user);
-            return res.status(200).send({ message: "Ты ты тот самый, молодец. Файл загружен"});
-        });
+            // Сохраняем файл в директорию 'uploads'
+            const pathToMoveFile = path.join(userPath, `${file.name}`);
+            file.mv(pathToMoveFile, async (err) => {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+                await dbController.addNewFileToUser(file.name, user);
+                return res.status(200).send({ message: "Ты ты тот самый, молодец. Файл загружен"});
+            });
+        }
+        return this.checkUserToWorkWithFile(req, res, fileLoadFunc);
     };
+
+    // Загружаем файл пользователя
+    async deleteFile(req, res) {
+        const { user } = req.params;
+        const fileDeleteFunc = () => {
+            // Получаем id файла
+            const fileId = req.query.fileId;
+            const file_name = dbController.deleteFileFromUser(fileId);            
+            // Удаляем файл по имени...
+        }
+        return this.checkUserToWorkWithFile(req, res, fileDeleteFunc);
+    }
 
     // Возвращаем список всех пользователей
     async getUsers(req, res) {
