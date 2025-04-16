@@ -2,12 +2,6 @@
 CREATE DATABASE IF NOT EXISTS fileserver;
 USE fileserver;
 
--- Таблица типов файлов
-CREATE TABLE file_types (
-    file_type_id INT AUTO_INCREMENT PRIMARY KEY,
-    type_name VARCHAR(50) NOT NULL
-);
-
 -- Таблица пользователей
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -23,12 +17,10 @@ CREATE TABLE users (
 CREATE TABLE files (
     file_id INT AUTO_INCREMENT PRIMARY KEY,
     file_name VARCHAR(255) NOT NULL,
-    file_type_id INT NOT NULL,
     file_size BIGINT NOT NULL,
     owner_id INT NOT NULL,
     file_path VARCHAR(512) NOT NULL,
     upload_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (file_type_id) REFERENCES file_types(file_type_id),
     FOREIGN KEY (owner_id) REFERENCES users(user_id)
 );
 
@@ -58,15 +50,13 @@ WHERE deletion_date IS NULL;
 -- Представление для информации о файлах пользователя
 CREATE VIEW user_files_info AS
 SELECT 
-    f.owner_id AS user_id,
-    f.file_id,
-    f.file_name,
-    ft.type_name AS file_type,
-    f.file_size,
-    f.upload_date,
-    f.file_path
-FROM files f
-JOIN file_types ft ON f.file_type_id = ft.file_type_id;
+    owner_id AS user_id,
+    file_id,
+    file_name,
+    file_size,
+    upload_date,
+    file_path
+FROM files;
 
 -- Функция проверки доверенного источника
 DELIMITER //
@@ -82,17 +72,6 @@ BEGIN
     );
 END //
 DELIMITER ;
-
-INSERT INTO file_types (type_name) VALUES
-('Picture'),
-('Microsoft Office'),
-('PDF'),
-('TXT'),
-('Audio'),
-('Video'),
-('Archive'),
-('Executable'),
-('Other');
 
 INSERT INTO users (nickname, email, encrypted_password, registration_date, files_visibility) VALUES
 ('petrov_ivan', 'ivan@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 1),
@@ -182,37 +161,68 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE get_user_info(
-    IN p_user_id INT
+    IN p_nickname VARCHAR(50)
 )
 BEGIN
+	DECLARE u_id INT;
+    SELECT id INTO u_id FROM users WHERE nickname = p_nickname;
     SELECT JSON_OBJECT(
         'user_id', user_id,
-        'nickname', nickname,
         'email', email,
         'registration_date', registration_date,
         'files_visibility', files_visibility
     ) AS user_info
     FROM personal_pages_info
-    WHERE user_id = p_user_id;
+    WHERE user_id = u_id;
 END //
 DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE get_user_files_info(
-    IN p_user_id INT
+    IN p_nickname VARCHAR(50)
 )
 BEGIN
+	DECLARE u_id INT;
+    SELECT user_id INTO u_id FROM users WHERE nickname = p_nickname;
     SELECT JSON_ARRAYAGG(
         JSON_OBJECT(
             'file_id', file_id,
             'file_name', file_name,
-            'file_type', file_type,
             'file_size', file_size,
             'upload_date', upload_date,
             'file_path', file_path
         )
     ) AS user_files_info
     FROM user_files_info
-    WHERE user_id = p_user_id;
+    WHERE user_id = u_id;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE get_file_info(
+	IN p_id INT
+)
+BEGIN
+	SELECT JSON_OBJECT(
+		'file_name', file_name,
+        'file_size', file_size,
+        'owner_id', owner_id,
+        'file_path', file_path
+    ) AS file_info
+    FROM files
+    WHERE file_id = p_id;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE add_record_to_audit(
+	IN p_file_id INT,
+    IN cur_user_id INT
+)
+BEGIN
+	DECLARE cur_owner_id INT;
+    SELECT owner_id INTO cur_owner_id FROM files WHERE file_id = p_file_id;
+    INSERT INTO download_audit (file_id, file_owner_id, downloader_id)
+    VALUES (p_file_id, cur_owner_id, cur_user_id);
 END //
 DELIMITER ;

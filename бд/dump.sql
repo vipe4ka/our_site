@@ -48,30 +48,6 @@ LOCK TABLES `download_audit` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `file_types`
---
-
-DROP TABLE IF EXISTS `file_types`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `file_types` (
-  `file_type_id` int NOT NULL AUTO_INCREMENT,
-  `type_name` varchar(50) NOT NULL,
-  PRIMARY KEY (`file_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `file_types`
---
-
-LOCK TABLES `file_types` WRITE;
-/*!40000 ALTER TABLE `file_types` DISABLE KEYS */;
-INSERT INTO `file_types` VALUES (1,'Picture'),(2,'Microsoft Office'),(3,'PDF'),(4,'TXT'),(5,'Audio'),(6,'Video'),(7,'Archive'),(8,'Executable'),(9,'Other');
-/*!40000 ALTER TABLE `file_types` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `files`
 --
 
@@ -81,16 +57,13 @@ DROP TABLE IF EXISTS `files`;
 CREATE TABLE `files` (
   `file_id` int NOT NULL AUTO_INCREMENT,
   `file_name` varchar(255) NOT NULL,
-  `file_type_id` int NOT NULL,
   `file_size` bigint NOT NULL,
   `owner_id` int NOT NULL,
   `file_path` varchar(512) NOT NULL,
   `upload_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`file_id`),
-  KEY `file_type_id` (`file_type_id`),
   KEY `owner_id` (`owner_id`),
-  CONSTRAINT `files_ibfk_1` FOREIGN KEY (`file_type_id`) REFERENCES `file_types` (`file_type_id`),
-  CONSTRAINT `files_ibfk_2` FOREIGN KEY (`owner_id`) REFERENCES `users` (`user_id`)
+  CONSTRAINT `files_ibfk_1` FOREIGN KEY (`owner_id`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -131,7 +104,6 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `user_id`,
  1 AS `file_id`,
  1 AS `file_name`,
- 1 AS `file_type`,
  1 AS `file_size`,
  1 AS `upload_date`,
  1 AS `file_path`*/;
@@ -164,7 +136,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'petrov_ivan','ivan@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-03 22:39:55',1,NULL),(2,'vasilyeva_anna','anna@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-03 22:39:55',0,NULL),(3,'ivanov_alex','alex@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-03 22:39:55',1,NULL),(4,'kotova_maria','maria@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-03 22:39:55',1,NULL),(5,'zel_ivan','david@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-03 22:39:55',0,NULL),(6,'belolga','olga@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-03 22:39:55',1,NULL),(7,'fedsergey','sergey@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-03 22:39:55',0,NULL);
+INSERT INTO `users` VALUES (1,'petrov_ivan','ivan@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 20:14:32',1,NULL),(2,'vasilyeva_anna','anna@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 20:14:32',0,NULL),(3,'ivanov_alex','alex@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 20:14:32',1,NULL),(4,'kotova_maria','maria@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 20:14:32',1,NULL),(5,'zel_ivan','david@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 20:14:32',0,NULL),(6,'belolga','olga@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 20:14:32',1,NULL),(7,'fedsergey','sergey@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 20:14:32',0,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -314,6 +286,59 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `add_record_to_audit` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_record_to_audit`(
+	IN p_file_id INT,
+    IN cur_user_id INT
+)
+BEGIN
+	DECLARE cur_owner_id INT;
+    SELECT owner_id INTO cur_owner_id FROM files WHERE file_id = p_file_id;
+    INSERT INTO download_audit (file_id, file_owner_id, downloader_id)
+    VALUES (p_file_id, cur_owner_id, cur_user_id);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_file_info` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_file_info`(
+	IN p_id INT
+)
+BEGIN
+	SELECT JSON_OBJECT(
+		'file_name', file_name,
+        'file_size', file_size,
+        'owner_id', owner_id,
+        'file_path', file_path
+    ) AS file_info
+    FROM files
+    WHERE file_id = p_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `get_user_files_info` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -325,21 +350,22 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_user_files_info`(
-    IN p_user_id INT
+    IN p_nickname VARCHAR(50)
 )
 BEGIN
+	DECLARE u_id INT;
+    SELECT user_id INTO u_id FROM users WHERE nickname = p_nickname;
     SELECT JSON_ARRAYAGG(
         JSON_OBJECT(
             'file_id', file_id,
             'file_name', file_name,
-            'file_type', file_type,
             'file_size', file_size,
             'upload_date', upload_date,
             'file_path', file_path
         )
     ) AS user_files_info
     FROM user_files_info
-    WHERE user_id = p_user_id;
+    WHERE user_id = u_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -357,18 +383,19 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_user_info`(
-    IN p_user_id INT
+    IN p_nickname VARCHAR(50)
 )
 BEGIN
+	DECLARE u_id INT;
+    SELECT id INTO u_id FROM users WHERE nickname = p_nickname;
     SELECT JSON_OBJECT(
         'user_id', user_id,
-        'nickname', nickname,
         'email', email,
         'registration_date', registration_date,
         'files_visibility', files_visibility
     ) AS user_info
     FROM personal_pages_info
-    WHERE user_id = p_user_id;
+    WHERE user_id = u_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -407,7 +434,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `user_files_info` AS select `f`.`owner_id` AS `user_id`,`f`.`file_id` AS `file_id`,`f`.`file_name` AS `file_name`,`ft`.`type_name` AS `file_type`,`f`.`file_size` AS `file_size`,`f`.`upload_date` AS `upload_date`,`f`.`file_path` AS `file_path` from (`files` `f` join `file_types` `ft` on((`f`.`file_type_id` = `ft`.`file_type_id`))) */;
+/*!50001 VIEW `user_files_info` AS select `files`.`owner_id` AS `user_id`,`files`.`file_id` AS `file_id`,`files`.`file_name` AS `file_name`,`files`.`file_size` AS `file_size`,`files`.`upload_date` AS `upload_date`,`files`.`file_path` AS `file_path` from `files` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -421,4 +448,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-03 22:44:34
+-- Dump completed on 2025-04-16 20:30:10
