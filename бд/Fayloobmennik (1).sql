@@ -226,3 +226,14 @@ BEGIN
     VALUES (p_file_id, cur_owner_id, cur_user_id);
 END //
 DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE search_file_ids(
+	IN search_text VARCHAR(255)
+)
+BEGIN
+	SELECT file_id 
+    FROM files 
+    WHERE file_name LIKE CONCAT('%', search_text, '%');
+END //
+DELIMITER ;
