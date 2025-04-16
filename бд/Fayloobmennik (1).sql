@@ -17,6 +17,7 @@ CREATE TABLE users (
 CREATE TABLE files (
     file_id INT AUTO_INCREMENT PRIMARY KEY,
     file_name VARCHAR(255) NOT NULL,
+    file_type VARCHAR(255) NOT NULL,
     file_size BIGINT NOT NULL,
     owner_id INT NOT NULL,
     file_path VARCHAR(512) NOT NULL,
@@ -53,6 +54,7 @@ SELECT
     owner_id AS user_id,
     file_id,
     file_name,
+    file_type,
     file_size,
     upload_date,
     file_path
@@ -188,6 +190,7 @@ BEGIN
         JSON_OBJECT(
             'file_id', file_id,
             'file_name', file_name,
+            'file_type', file_type,
             'file_size', file_size,
             'upload_date', upload_date,
             'file_path', file_path
@@ -205,6 +208,7 @@ CREATE PROCEDURE get_file_info(
 BEGIN
 	SELECT JSON_OBJECT(
 		'file_name', file_name,
+        'file_type', file_type,
         'file_size', file_size,
         'owner_id', owner_id,
         'file_path', file_path

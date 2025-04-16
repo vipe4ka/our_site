@@ -57,6 +57,7 @@ DROP TABLE IF EXISTS `files`;
 CREATE TABLE `files` (
   `file_id` int NOT NULL AUTO_INCREMENT,
   `file_name` varchar(255) NOT NULL,
+  `file_type` varchar(255) NOT NULL,
   `file_size` bigint NOT NULL,
   `owner_id` int NOT NULL,
   `file_path` varchar(512) NOT NULL,
@@ -104,6 +105,7 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `user_id`,
  1 AS `file_id`,
  1 AS `file_name`,
+ 1 AS `file_type`,
  1 AS `file_size`,
  1 AS `upload_date`,
  1 AS `file_path`*/;
@@ -136,7 +138,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'petrov_ivan','ivan@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 20:14:32',1,NULL),(2,'vasilyeva_anna','anna@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 20:14:32',0,NULL),(3,'ivanov_alex','alex@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 20:14:32',1,NULL),(4,'kotova_maria','maria@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 20:14:32',1,NULL),(5,'zel_ivan','david@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 20:14:32',0,NULL),(6,'belolga','olga@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 20:14:32',1,NULL),(7,'fedsergey','sergey@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 20:14:32',0,NULL);
+INSERT INTO `users` VALUES (1,'petrov_ivan','ivan@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 21:04:52',1,NULL),(2,'vasilyeva_anna','anna@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 21:04:52',0,NULL),(3,'ivanov_alex','alex@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 21:04:52',1,NULL),(4,'kotova_maria','maria@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 21:04:52',1,NULL),(5,'zel_ivan','david@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 21:04:52',0,NULL),(6,'belolga','olga@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 21:04:52',1,NULL),(7,'fedsergey','sergey@example.com','$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e','2025-04-16 21:04:52',0,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -171,7 +173,7 @@ UNLOCK TABLES;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `user_files_info` AS select `files`.`owner_id` AS `user_id`,`files`.`file_id` AS `file_id`,`files`.`file_name` AS `file_name`,`files`.`file_size` AS `file_size`,`files`.`upload_date` AS `upload_date`,`files`.`file_path` AS `file_path` from `files` */;
+/*!50001 VIEW `user_files_info` AS select `files`.`owner_id` AS `user_id`,`files`.`file_id` AS `file_id`,`files`.`file_name` AS `file_name`,`files`.`file_type` AS `file_type`,`files`.`file_size` AS `file_size`,`files`.`upload_date` AS `upload_date`,`files`.`file_path` AS `file_path` from `files` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -185,4 +187,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-16 20:59:21
+-- Dump completed on 2025-04-16 21:05:35
