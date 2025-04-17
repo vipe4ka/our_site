@@ -12,7 +12,7 @@ export class DbController {
         });
     }
 
-    async execute(query, params) {
+    async execute(query, params = []) {
         try {
             const [result] = await this.connection.execute(query, [...params]);
             return result;
@@ -54,6 +54,10 @@ export class DbController {
     async deleteFileFromUser(file_id) {
         const result = await this.execute(`SELECT del_file_by_id(?) as file_name;`, [file_id]);
         return result[0].file_name;
+    }
+
+    async changeFileVisibility(file_id, new_file_visibility) {
+        await this.execute(`UPDATE files SET file_visibility = ? WHERE file_id = ?;`, [new_file_visibility, file_id]);
     }
 
     // Выдаем файлы юзера
