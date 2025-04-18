@@ -23,4 +23,8 @@ export default class UserService {
     return $api.delete(`/user/${username}/deleteFile?fileId=${fileId}`);
   }
 
+  static changeVisibilityRequest(username, fileId, newVisibilityStatus) {
+    return $api.put(`/user/${username}/changeFileVisibility?fileId=${fileId}&newVisibilityStatus=${newVisibilityStatus}`);
+  }
+
 }

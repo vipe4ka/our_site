@@ -1,11 +1,9 @@
 import { useState } from "react";
-export default function FileServices({
-  isItYou,
-  file,
-  idx,
-  onDelete,
-  setUpdate,
-}) {
+import UserService from "../../services/UserService";
+import { Context } from "../..";
+import { useContext } from "react";
+export default function FileServices({ isItYou, file, idx, onDelete }) {
+  const { store } = useContext(Context);
   const [isCheck, setIsCheck] = useState(false);
   const [isVisble, setIsVisible] = useState(file.file_visibility);
   const [isLoading, setIsLoading] = useState(false);
@@ -23,9 +21,11 @@ export default function FileServices({
         <div className="file-buttons">
           <div
             className="visib-btn"
-            onClick={() => {
-              //тут отправь запрос на скрытие или открытие
-              setIsVisible(!isVisble);
+            onClick={async () => {
+              // Запрос на скрытие или открытие
+              UserService.changeVisibilityRequest(store.user, file.file_id, !isVisble ? 1 : 0)
+                .then(() => setIsVisible(!isVisble))
+                .catch(console.error);
             }}
           >
             <img

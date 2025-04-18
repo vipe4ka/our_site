@@ -34,6 +34,7 @@ export class Controller {
         this.loadFile = this.loadFile.bind(this);
         this.checkToken = this.checkToken.bind(this);
         this.deleteFile = this.deleteFile.bind(this);
+        this.changeFileVisibility = this.changeFileVisibility.bind(this);
     }
     
     generateToken(username) {
@@ -192,13 +193,26 @@ export class Controller {
 
     // Загружаем файл пользователя
     async deleteFile(req, res) {
-        const { user } = req.params;
         const fileDeleteFunc = () => {
             // Получаем id файла
             const fileId = req.query.fileId;
-            const file_name = dbController.deleteFileFromUser(fileId);
+            const file_name = dbController.deleteFileFromUser(fileId);            
+            // Удаляем файл по имени...
+            return res.status(200).send({ message: "Файл удален"});
         }
         return this.checkUserToWorkWithFile(req, res, fileDeleteFunc);
+    }
+
+    // Меняем видимость файла пользователя
+    async changeFileVisibility(req, res) {
+        const fileChangeVisibilityFunc = async () => {
+            // Получаем id файла
+            const fileId = req.query.fileId;
+            const newVisibilityStatus = req.query.newVisibilityStatus;
+            await dbController.changeFileVisibility(fileId, newVisibilityStatus);            
+            return res.status(200).send({ message: "У файла изменена видимость"});
+        }
+        return this.checkUserToWorkWithFile(req, res, fileChangeVisibilityFunc);
     }
 
     // Возвращаем список всех пользователей
