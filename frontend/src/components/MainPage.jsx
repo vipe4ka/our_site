@@ -6,27 +6,23 @@ import { Context } from "../index";
 import UserService from "../services/UserService";
 
 export default function MainPage() {
-
-  const { store } = useContext(Context)
+  const { store } = useContext(Context);
   const fileInputRef = useRef(null);
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       console.log("Выбран файл:", file.name);
-      const response = await UserService.loadRequest(store.user, file);
-      if (response.status === 200) {
-        alert("Всё гуд!");
-      } else {
-        alert("Всё плохо!");
-      }
+      UserService.loadRequest(store.user, file)
+        .then(console.log("Файл успешно загружен"))
+        .catch(console.log("При загрузке возникли проблемы"));
     }
   };
 
   const handleButtonClick = () => {
-    store.isAuth ? 
-    fileInputRef.current.click() : 
-    window.open("http://localhost:3000/log-in/", "_self");
+    store.isAuth
+      ? fileInputRef.current.click()
+      : window.open("http://localhost:3000/log-in/", "_self");
   };
 
   return (
@@ -34,12 +30,14 @@ export default function MainPage() {
       <Header isLog={store.isAuth} />
       <main>
         <div className="block-file-container">
-         <BrandName theme={"dark"}/>
+          <BrandName theme={"dark"} />
         </div>
         <div className="main-container">
           <div className="main-text-container">
             <p className="main-text-header">Загрузить файлы</p>
-            <p className="main-text-desc">Передача ваших файлов — наша задача!</p>
+            <p className="main-text-desc">
+              Передача ваших файлов — наша задача!
+            </p>
           </div>
           <div className="image-container">
             <img src="/pictures/hosting.png" alt="main-picture" />
@@ -51,7 +49,11 @@ export default function MainPage() {
             onChange={handleFileChange}
             multiple
           />
-          <GreenButton handle={handleButtonClick} mode={"upload-button"} content={"Выбрать файл"}/>
+          <GreenButton
+            handle={handleButtonClick}
+            mode={"upload-button"}
+            content={"Выбрать файл"}
+          />
         </div>
       </main>
     </div>

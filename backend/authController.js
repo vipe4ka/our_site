@@ -166,6 +166,7 @@ export class Controller {
         const fileLoadFunc = (user) => {
             // Получаем файл из поля 'file'
             const file = req.files.file;
+            const fixedName = Buffer.from(file.name, 'binary').toString('utf8')
             // Каталог пользователя
             const userPath = path.join(__dirname, `uploads/${user}`);
             if (!fs.existsSync(userPath)) {
@@ -178,12 +179,12 @@ export class Controller {
                 }
             }
             // Сохраняем файл в директорию 'uploads'
-            const pathToMoveFile = path.join(userPath, `${file.name}`);
+            const pathToMoveFile = path.join(userPath, `${fixedName}`);
             file.mv(pathToMoveFile, async (err) => {
                 if (err) {
                     return res.status(500).send(err);
                 }
-                await dbController.addNewFileToUser(file.name, user);
+                await dbController.addNewFileToUser(fixedName, user);
                 return res.status(200).send({ message: "Ты ты тот самый, молодец. Файл загружен"});
             });
         }
