@@ -9,7 +9,7 @@ import OtherPage from "./OtherPage";
 import Loading from "./ common/Loading";
 import FileList from "./FileList";
 import { Context } from "../index";
-
+import SearchButton from "./ common/SearchButton";
 export default function UserPage() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,6 +17,7 @@ export default function UserPage() {
   const { nickname } = useParams();
   const [update, setUpdate] = useState(null);
   const fileInputRef = useRef(null);
+  const [showFiles, setShowFiles] = useState([]);
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
@@ -42,6 +43,7 @@ export default function UserPage() {
         const response = await UserService.usersRequest(nickname);
         setUserData(response.data);
         setLoading(false);
+        setShowFiles(response.data.files)
       } catch (error) {
         console.error("Ошибка при получении данных пользователя:", error);
         setLoading(false);
@@ -63,7 +65,9 @@ export default function UserPage() {
     return (
       <OtherPage
         name={nickname}
-        f_list={userData.files}
+        f_list={showFiles}
+        setShowFiles={setShowFiles}
+        all_f_list={userData.files}
         setUpdate={setUpdate}
       />
     );
@@ -109,11 +113,15 @@ export default function UserPage() {
         </div>
         <div className="user-content-container">
           <p>Список файлов:</p>
+          <SearchButton
+          setShowFiles={setShowFiles}
+          f_list={userData.files}
+          />
         </div>
         <div className="user-content">
           <FileList
             isYou={true}
-            f_list={userData.files}
+            f_list={showFiles}
             setUpdate={setUpdate}
           />
         </div>

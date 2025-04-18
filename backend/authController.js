@@ -124,14 +124,14 @@ export class Controller {
         const authResult = this.checkToken(authHeader, user);
     
         if (authResult === null) {
-            const files = await dbController.getUserFiles(user, true);
+            const files = await dbController.getUserFiles(user);
             return res.status(200).send({ message: "Только чтение, ты не авторизован", isItYou: false, files});
         } 
         if (authResult.result) {
             const files = await dbController.getUserFiles(user, true);
             return res.status(200).send({ message: "Это ты тот самый", isItYou: true, files});
         }
-        const files = await dbController.getUserFiles(user, true);
+        const files = await dbController.getUserFiles(user);
         if (authResult.error) {
             return res.status(500).send({ error: authResult.error});    
         }

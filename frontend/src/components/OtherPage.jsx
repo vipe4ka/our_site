@@ -4,6 +4,7 @@ import GreenButton from "./ common/GreenButton";
 import { Context } from "..";
 import { useContext } from "react";
 import FileList from "./FileList";
+import SearchButton from "./ common/SearchButton";
 export default function OtherPage(props) {
 
     const { store } = useContext(Context);
@@ -32,6 +33,7 @@ export default function OtherPage(props) {
         </div>
         <div className="user-content-container other-content">
           <p>Список файлов:</p>
+          <SearchButton f_list={props.all_f_list} setShowFiles={props.setShowFiles}/>
         </div>
 
         <div className="user-content">
