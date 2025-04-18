@@ -5,6 +5,10 @@ import { useContext } from "react";
 
 export default function FileList({ f_list, isYou, setUpdate }) {
   const { store } = useContext(Context);
+
+  async function handledelete(file){
+    return await UserService.deleteRequest(store.user, file.file_id);
+  }
   return (
     <div className="file-list">
       {f_list.map((file, idx) => (
@@ -13,11 +17,8 @@ export default function FileList({ f_list, isYou, setUpdate }) {
           isItYou={isYou}
           idx={idx}
           file={file}
-          onDelete={async () => {
-            // Удаление файла из БД
-            const response = await UserService.deleteRequest(store.user, file.file_id);
-            setUpdate(file.file_id);
-          }}
+          onDelete={handledelete}
+          setUpdate={setUpdate}
         />
       ))}
     </div>

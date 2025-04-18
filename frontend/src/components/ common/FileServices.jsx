@@ -1,8 +1,14 @@
 import { useState } from "react";
-export default function FileServices({ isItYou, file, idx, onDelete }) {
+export default function FileServices({
+  isItYou,
+  file,
+  idx,
+  onDelete,
+  setUpdate,
+}) {
   const [isCheck, setIsCheck] = useState(false);
   const [isVisble, setIsVisible] = useState(file.file_visibility);
-
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <div className="file-conteiner">
       <input
@@ -18,7 +24,7 @@ export default function FileServices({ isItYou, file, idx, onDelete }) {
           <div
             className="visib-btn"
             onClick={() => {
-                //тут отправь запрос на скрытие или открытие 
+              //тут отправь запрос на скрытие или открытие
               setIsVisible(!isVisble);
             }}
           >
@@ -27,8 +33,21 @@ export default function FileServices({ isItYou, file, idx, onDelete }) {
               alt="vis"
             ></img>
           </div>
-          <div className="del-btn" onClick={onDelete}>
-            <img src="/pictures/delic.svg" alt="del"></img>
+          <div
+            className="del-btn"
+            onClick={() => {
+              onDelete(file).then(() => {
+                setUpdate(file.file_id);
+                setIsLoading(false);
+              });
+              setIsLoading(true);
+            }}
+          >
+            {isLoading ? (
+              <div class="loader"></div>
+            ) : (
+              <img src="/pictures/delic.svg" alt="del" />
+            )}
           </div>
         </div>
       )}

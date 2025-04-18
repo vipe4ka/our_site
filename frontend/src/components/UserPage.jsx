@@ -22,13 +22,12 @@ export default function UserPage() {
     const file = event.target.files[0];
     if (file) {
       console.log("Выбран файл:", file.name);
-      const response = await UserService.loadRequest(nickname, file);
-      setUpdate(Math.random());
-      if (response.status === 200) {
-        alert("Всё гуд!");
-      } else {
-        alert("Всё плохо!");
-      }
+      UserService.loadRequest(nickname, file)
+        .then(() => {
+          console.log("Файл успешно загружен");
+          setUpdate(Math.random());
+        })
+        .catch(console.log("При загрузке возникли проблемы"));
     }
   };
   const handleButtonClick = () => {
