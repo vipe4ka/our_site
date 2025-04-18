@@ -127,7 +127,10 @@ export default function UserPage() {
         </div>
       </div>
       <div className="user-button-container">
-        <GreenButton mode={"small-button"} content={"Скачать"} />
+        <GreenButton
+         mode={"small-button"}
+         handle={() => {alert("Качаем...")}}
+         content={"Скачать"} />
         <input
           type="file"
           ref={fileInputRef}

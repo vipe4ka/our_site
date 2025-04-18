@@ -61,9 +61,18 @@ export class DbController {
     }
 
     // Выдаем файлы юзера
-    async getUserFiles(username, withInvisible = false) {
-        const result = await this.execute(`CALL get_files_by_user(?, ?)`, [username, withInvisible]);
-        return result[0];
+    async getUserFiles(username, with_invisible = false, file_ides = null) {
+        let query = `SELECT file_id, file_name, file_visibility\
+            FROM files\
+            WHERE owner_username = ?\
+            AND file_visibility in (1, ?)`;
+        if (file_ides) {
+            query += ` AND file_id in (${file_ides.join(', ')});`;
+        } else {
+            query += `;`;
+        }
+        const result = await this.execute(query, [username, !with_invisible]);
+        return result || [];
     }
 
     // Выдаем имена юзеров с количеством файлов

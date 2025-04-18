@@ -1,4 +1,5 @@
 import { dbController } from "./dbController.js";
+import archiver from "archiver";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import path from "path";
@@ -35,6 +36,7 @@ export class Controller {
         this.checkToken = this.checkToken.bind(this);
         this.deleteFile = this.deleteFile.bind(this);
         this.changeFileVisibility = this.changeFileVisibility.bind(this);
+        this.downloadFile = this.downloadFile.bind(this);
     }
     
     generateToken(username) {
@@ -46,16 +48,18 @@ export class Controller {
     }
 
     checkToken(authHeader, user) {
+        if(!authHeader)
+            return null;
         const token = authHeader && authHeader.split(' ')[1];
-    
         if (token === "null")
             return null;
+        
         try {
             const decoded = jwt.verify(token, this.seckret_key);
             if (decoded.username === user) {
                 return {result: true};
             }
-            return false;
+            return {result: false};
         } catch (error) {
             return {result: false, error};
         }
@@ -114,11 +118,6 @@ export class Controller {
     // Даем определенный доступ к странице пользователя
     async getUser(req, res) {
         const { user } = req.params;
-        // Ищем есть ли пользователь с таким логином
-        const isExistsName = await dbController.uniqueNickname(user);
-        if (!isExistsName) {
-            return res.status(400).json({message: "Такого пользователя нет"});
-        }
         const authHeader = req.headers["authorization"];
         
         const authResult = this.checkToken(authHeader, user);
@@ -140,11 +139,6 @@ export class Controller {
 
     async checkUserToWorkWithFile(req, res, fileOperation) {
         const { user } = req.params;
-        // Ищем есть ли пользователь с таким логином
-        const isExistsName = await dbController.uniqueNickname(user);
-        if (!isExistsName) {
-            return res.status(400).json({message: "Такого пользователя нет"});
-        }
         const authHeader = req.headers["authorization"];
         const result = this.checkToken(authHeader, user);
     
@@ -220,4 +214,46 @@ export class Controller {
         const users = await dbController.getAllUsernamesWithFilecounts();
         return res.status(200).send({ users });
     };
+
+    // Отправляем файл на скачивание
+    async downloadFile(req, res, next) {    
+        const { user } = req.params;
+        const authResult = this.checkToken(req.headers?.authorization, user);
+        const withInvisible = authResult?.result ?? false;
+        // Получаем id файлов
+        let fileIdes = JSON.parse(req.body.fileIdes);
+        fileIdes = Array.isArray(fileIdes) ? fileIdes : 
+        fileIdes ? [fileIdes] : [];
+        if (!fileIdes.length) {
+            return res.status(400).json({ message: "Не указаны ID файлов" });
+        }
+        
+        const filenames = await dbController.getUserFiles(user, withInvisible, fileIdes);
+        if (!filenames.length) {
+            return res.status(404).json({ message: "Файлы не найдены" });
+        }
+
+        // Проверяем существование файлов
+        const filePaths = filenames.map(fileRow => {
+            const filePath = path.join(__dirname, 'uploads', user, fileRow.file_name);
+            return { path: filePath, name: fileRow.original_name || fileRow.file_name };
+        });
+
+        // Если один файл - скачиваем его
+        if (filePaths.length === 1) {
+            return res.download(filePaths[0].path, filePaths[0].name);
+        }
+
+        // Если несколько файлов - создаём ZIP-архив
+        const archive = archiver('zip');
+
+        res.attachment('files.zip');
+        archive.pipe(res);
+
+        filePaths.forEach(file => {
+            archive.file(file.path, { name: file.name });
+        });
+
+        await archive.finalize();
+    }
 }

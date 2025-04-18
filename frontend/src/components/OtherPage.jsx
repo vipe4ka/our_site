@@ -40,7 +40,11 @@ export default function OtherPage(props) {
           <FileList isYou={false} f_list={props.f_list}/>
         </div>
       </div>
-      <GreenButton mode={"small-button share-btn"} content={"Скачать"} />
+      <GreenButton 
+        mode={"small-button share-btn"} 
+        content={"Скачать"} 
+        handle={()=>{alert("качаем");}}
+        />
     </>
   );
 }

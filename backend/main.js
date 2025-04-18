@@ -3,7 +3,7 @@ import fileUpload from "express-fileupload";
 import { routerAuth, routerUser } from "./authRouter.js";
 import cors from "cors";
 const app = express();
-const port = process.env.PORT || 8000;//8000
+const port = process.env.PORT || 5000;//8000
 
 app.use(express.json());
 // Настройка CORS
@@ -18,7 +18,7 @@ app.use("/auth", routerAuth);
 app.use("/user", routerUser);
 app.use((err, req, res, next) => {
     console.error(err);
-    return res.status(500).json({ error: "Ошибка базы данных" });
+    return res.status(500).json({ error: "Ошибка сервера" });
 });
 
 const start = async () => {
