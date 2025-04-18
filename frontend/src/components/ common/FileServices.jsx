@@ -2,7 +2,7 @@ import { useState } from "react";
 import UserService from "../../services/UserService";
 import { Context } from "../..";
 import { useContext } from "react";
-export default function FileServices({ isItYou, file, idx, onDelete }) {
+export default function FileServices({ isItYou, file, idx, onDelete, setUpdate }) {
   const { store } = useContext(Context);
   const [isCheck, setIsCheck] = useState(false);
   const [isVisble, setIsVisible] = useState(file.file_visibility);

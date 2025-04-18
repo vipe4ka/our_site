@@ -327,6 +327,9 @@ button {
   display: flex;
   left: 430px;
   top: 10px;
+  flex-direction: row;
+  gap: 30px;
+  align-items: center;
 }
 .user-content-container p {
   position: relative;
@@ -368,6 +371,7 @@ button {
   position: relative;
   right: 20px;
   width: fit-content;
+  z-index: 2;
 }
 .other-check-text-container {
   display: flex;
@@ -389,6 +393,7 @@ button {
   position: relative;
   bottom: 20px;
   right: 60px;
+  z-index: 2;
 }
 .other-content {
   left: 80px;
@@ -519,4 +524,18 @@ input[type="checkbox"]{
   to {
     transform: rotate(1turn)
   }
+}
+.user-find{
+  position: relative;
+}
+.user-find input{
+  display: block;
+  background-color: transparent;
+  color: black;
+  border: 0;
+  border-bottom: 2px solid black; 
+  font-size: 26px;
+  padding: 10px 10px 10px 5px;
+  width: 300px;
+  outline: none;
 }
