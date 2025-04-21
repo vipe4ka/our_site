@@ -221,14 +221,14 @@ export class Controller {
         const authResult = this.checkToken(req.headers?.authorization, user);
         const withInvisible = authResult?.result ?? false;
         // Получаем id файлов
-        let fileIdes = JSON.parse(req.body.fileIdes);
-        fileIdes = Array.isArray(fileIdes) ? fileIdes : 
-        fileIdes ? [fileIdes] : [];
-        if (!fileIdes.length) {
+        let fileIds = req.body.fileIds;
+        fileIds = Array.isArray(fileIds) ? fileIds : 
+        fileIds ? [fileIds] : [];
+        if (!fileIds.length) {
             return res.status(400).json({ message: "Не указаны ID файлов" });
         }
         
-        const filenames = await dbController.getUserFiles(user, withInvisible, fileIdes);
+        const filenames = await dbController.getUserFiles(user, withInvisible, fileIds);
         if (!filenames.length) {
             return res.status(404).json({ message: "Файлы не найдены" });
         }

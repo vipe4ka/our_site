@@ -9,7 +9,7 @@ app.use(express.json());
 // Настройка CORS
 app.use(cors({
     origin: "http://localhost:3000", // Домен, с которого разрешен доступ
-    methods: ["GET", "POST", "PUT", "DELETE"], // Разрешенные методы
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Разрешенные методы
     allowedHeaders: ["Content-Type", "Authorization"], // Разрешенные заголовки
     credentials: true // Разрешает передачу куки и авторизационных данных
 }));
