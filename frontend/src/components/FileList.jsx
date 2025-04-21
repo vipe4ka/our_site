@@ -3,7 +3,7 @@ import UserService from "../services/UserService";
 import { Context } from "..";
 import { useContext } from "react";
 
-export default function FileList({ f_list, isYou, setUpdate }) {
+export default function FileList({ f_list, isYou, setUpdate, isDownloading }) {
   const { store } = useContext(Context);
 
   async function handledelete(file){
@@ -19,6 +19,7 @@ export default function FileList({ f_list, isYou, setUpdate }) {
           file={file}
           onDelete={handledelete}
           setUpdate={setUpdate}
+          isDownloading={isDownloading}
         />
       ))}
     </div>

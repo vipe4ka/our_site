@@ -18,7 +18,8 @@ export default function UserPage() {
   const [update, setUpdate] = useState(null);
   const fileInputRef = useRef(null);
   const [showFiles, setShowFiles] = useState([]);
-
+  const [isDownloading, setIsDownloading] = useState(false);
+  
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -36,6 +37,44 @@ export default function UserPage() {
       ? fileInputRef.current.click()
       : window.open("http://localhost:3000/log-in/", "_self");
   };
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    try {
+      const checkList = JSON.parse(sessionStorage.getItem("checkList") || "[]");
+
+      if (checkList.length === 0) {
+        alert("Выберите файлы для скачивания");
+        return;
+      }
+      const response = await UserService.downloadFiles(nickname, checkList);
+
+      if (response.status === 200) {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        const contentDisposition = response.headers["content-disposition"];
+        let filename = "files.zip";
+
+        if (contentDisposition) {
+          const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+          if (filenameMatch && filenameMatch[1]) {
+            filename = filenameMatch[1];
+          }
+        }
+
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error("Полная ошибка:", error);
+      alert("Произошла ошибка при скачивании файлов");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   useEffect(() => {
     async function fetchUserData() {
@@ -43,7 +82,7 @@ export default function UserPage() {
         const response = await UserService.usersRequest(nickname);
         setUserData(response.data);
         setLoading(false);
-        setShowFiles(response.data.files)
+        setShowFiles(response.data.files);
       } catch (error) {
         console.error("Ошибка при получении данных пользователя:", error);
         setLoading(false);
@@ -69,6 +108,8 @@ export default function UserPage() {
         setShowFiles={setShowFiles}
         all_f_list={userData.files}
         setUpdate={setUpdate}
+        isDownloading={isDownloading}
+        handleDownload={handleDownload}
       />
     );
   }
@@ -113,24 +154,23 @@ export default function UserPage() {
         </div>
         <div className="user-content-container">
           <p>Список файлов:</p>
-          <SearchButton
-          setShowFiles={setShowFiles}
-          f_list={userData.files}
-          />
+          <SearchButton setShowFiles={setShowFiles} f_list={userData.files} />
         </div>
         <div className="user-content">
           <FileList
             isYou={true}
             f_list={showFiles}
             setUpdate={setUpdate}
+            isDownloading={isDownloading}
           />
         </div>
       </div>
       <div className="user-button-container">
         <GreenButton
-         mode={"small-button"}
-         handle={() => {alert("Качаем...")}}
-         content={"Скачать"} />
+          mode={"small-button"}
+          handle={handleDownload}
+          content={isDownloading ? "Скачивание..." : "Скачать"}
+        />
         <input
           type="file"
           ref={fileInputRef}

@@ -37,13 +37,13 @@ export default function OtherPage(props) {
         </div>
 
         <div className="user-content">
-          <FileList isYou={false} f_list={props.f_list}/>
+          <FileList isYou={false} f_list={props.f_list} isDownloading={props.isDownloading}/>
         </div>
       </div>
       <GreenButton 
         mode={"small-button share-btn"} 
-        content={"Скачать"} 
-        handle={()=>{alert("качаем");}}
+        handle={props.handleDownload}
+        content={props.isDownloading ? "Скачивание..." : "Скачать"}
         />
     </>
   );
