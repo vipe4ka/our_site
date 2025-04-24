@@ -2,12 +2,6 @@
 CREATE DATABASE IF NOT EXISTS fileserver;
 USE fileserver;
 
--- Таблица типов файлов
-CREATE TABLE file_types (
-    file_type_id INT AUTO_INCREMENT PRIMARY KEY,
-    type_name VARCHAR(50) NOT NULL
-);
-
 -- Таблица пользователей
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -15,7 +9,6 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL UNIQUE,
     encrypted_password VARCHAR(255) NOT NULL,
     registration_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    files_visibility BOOLEAN DEFAULT 1 COMMENT '0 - private, 1 - public',
     deletion_date DATETIME DEFAULT NULL
 );
 
@@ -23,13 +16,10 @@ CREATE TABLE users (
 CREATE TABLE files (
     file_id INT AUTO_INCREMENT PRIMARY KEY,
     file_name VARCHAR(255) NOT NULL,
-    file_type_id INT NOT NULL,
-    file_size BIGINT NOT NULL,
-    owner_id INT NOT NULL,
-    file_path VARCHAR(512) NOT NULL,
+    owner_username VARCHAR(50) NOT NULL,
+    file_visibility BOOLEAN DEFAULT 1 COMMENT '0 - private, 1 - public',
     upload_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (file_type_id) REFERENCES file_types(file_type_id),
-    FOREIGN KEY (owner_id) REFERENCES users(user_id)
+    FOREIGN KEY (owner_username) REFERENCES users(nickname)
 );
 
 -- Таблица аудита скачиваний (с информацией о владельце и скачивающем)
@@ -50,23 +40,18 @@ SELECT
     user_id,
     nickname,
     email,
-    registration_date,
-    files_visibility
+    registration_date
 FROM users
 WHERE deletion_date IS NULL;
 
 -- Представление для информации о файлах пользователя
 CREATE VIEW user_files_info AS
 SELECT 
-    f.owner_id AS user_id,
+    f.owner_username AS username,
     f.file_id,
     f.file_name,
-    ft.type_name AS file_type,
-    f.file_size,
-    f.upload_date,
-    f.file_path
-FROM files f
-JOIN file_types ft ON f.file_type_id = ft.file_type_id;
+    f.upload_date
+FROM files f;
 
 -- Функция проверки доверенного источника
 DELIMITER //
@@ -83,25 +68,14 @@ BEGIN
 END //
 DELIMITER ;
 
-INSERT INTO file_types (type_name) VALUES
-('Picture'),
-('Microsoft Office'),
-('PDF'),
-('TXT'),
-('Audio'),
-('Video'),
-('Archive'),
-('Executable'),
-('Other');
-
-INSERT INTO users (nickname, email, encrypted_password, registration_date, files_visibility) VALUES
-('petrov_ivan', 'ivan@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 1),
-('vasilyeva_anna', 'anna@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 0),
-('ivanov_alex', 'alex@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 1),
-('kotova_maria', 'maria@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 1),
-('zel_ivan', 'david@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 0),
-('belolga', 'olga@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 1),
-('fedsergey', 'sergey@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP, 0);
+INSERT INTO users (nickname, email, encrypted_password, registration_date) VALUES
+('petrov_ivan', 'ivan@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP),
+('vasilyeva_anna', 'anna@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP),
+('ivanov_alex', 'alex@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP),
+('kotova_maria', 'maria@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP),
+('zel_ivan', 'david@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP),
+('belolga', 'olga@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP),
+('fedsergey', 'sergey@example.com', '$2a$10$xJwL5v5zJz6Z6Z6Z6Z6Z6e', CURRENT_TIMESTAMP);
 
 -- Процедура добавления пользователя
 DELIMITER //
@@ -177,5 +151,58 @@ BEGIN
         SELECT 1 
         FROM users
         WHERE nickname = p_nickname);
+END //
+DELIMITER ;
+
+-- Процедура получения списка файлов
+DELIMITER //
+CREATE PROCEDURE get_files_by_user(
+    IN userName VARCHAR(50),
+    IN withInvisible BOOLEAN
+)
+BEGIN
+    SELECT file_id, file_name, file_visibility
+    FROM files
+    WHERE owner_username = userName
+      AND file_visibility in (1, !withInvisible);
+END //
+DELIMITER ;
+
+-- Функция удаления файла по id
+DROP FUNCTION IF EXISTS del_file_by_id;
+DELIMITER //
+CREATE FUNCTION del_file_by_id(
+    _file_id INT
+) RETURNS VARCHAR(255)
+DETERMINISTIC
+READS SQL DATA
+BEGIN
+    DECLARE file_name_var VARCHAR(255);
+    DECLARE rows_affected INT;
+    
+    -- Получаем имя файла по ID
+    SELECT file_name INTO file_name_var 
+    FROM files 
+    WHERE file_id = _file_id
+    LIMIT 1;
+    
+    -- Проверяем, найден ли файл
+    IF file_name_var IS NULL THEN
+        RETURN NULL;
+    END IF;
+    
+    -- Удаляем файл из таблицы
+    DELETE FROM files 
+    WHERE file_id = _file_id;
+    
+    -- Проверяем, что запись действительно удалена
+    SET rows_affected = ROW_COUNT();
+    
+    IF rows_affected = 0 THEN
+        RETURN NULL;
+    END IF;
+    
+    -- Возвращаем имя удаленного файла
+    RETURN file_name_var;
 END //
 DELIMITER ;

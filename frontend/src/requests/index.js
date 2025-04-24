@@ -1,5 +1,5 @@
 import axios from "axios";
-export const API_URL = "http://localhost:5000";//8000
+export const API_URL = "http://localhost:8000";//8000
 
 const $api = axios.create({
   withCredentials: true,
@@ -7,7 +7,7 @@ const $api = axios.create({
 });
 
 $api.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
+  config.headers.Authorization = `Bearer ${sessionStorage.getItem("token")}`;
   return config;
 });
 

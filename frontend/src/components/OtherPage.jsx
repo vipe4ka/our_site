@@ -3,6 +3,8 @@ import BrandName from "./ common/BrandName";
 import GreenButton from "./ common/GreenButton";
 import { Context } from "..";
 import { useContext } from "react";
+import FileList from "./FileList";
+import SearchButton from "./ common/SearchButton";
 export default function OtherPage(props) {
 
     const { store } = useContext(Context);
@@ -31,11 +33,18 @@ export default function OtherPage(props) {
         </div>
         <div className="user-content-container other-content">
           <p>Список файлов:</p>
+          <SearchButton f_list={props.all_f_list} setShowFiles={props.setShowFiles}/>
         </div>
 
-        <div className="user-content"></div>
+        <div className="user-content">
+          <FileList isYou={false} f_list={props.f_list} isDownloading={props.isDownloading}/>
+        </div>
       </div>
-      <GreenButton mode={"small-button share-btn"} content={"Скачать"} />
+      <GreenButton 
+        mode={"small-button share-btn"} 
+        handle={props.handleDownload}
+        content={props.isDownloading ? "Скачивание..." : "Скачать"}
+        />
     </>
   );
 }

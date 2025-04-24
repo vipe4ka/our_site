@@ -5,6 +5,7 @@ import MainPage from "./components/MainPage";
 import About from "./components/About";
 import NotFound from "./components/NotFound";
 import UserPage from "./components/UserPage";
+import AllUsers from "./components/AllUsers";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/sing-in" element={<LoginForm isRegist={true} />}></Route>
         <Route path="/log-in" element={<LoginForm isRegist={false} />}></Route>
         <Route path="/user/:nickname" element={<UserPage />}></Route>
+        <Route path="/user" element={<AllUsers />}></Route>
         <Route path="/about" element={<About/>}></Route>
         <Route path="*" element={<NotFound />}></Route>
       </Routes>

@@ -14,29 +14,31 @@
   font-family: "Radiotehnika";
   src: url("../public/fonts/ofont.ru_Radiotechnika.ttf");
 }
-.wave-bouncing-loading-animation{
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    font-size: min(60px,6vw);
-    color: black;
-    -webkit-box-reflect: below -0.4em linear-gradient(transparent, #00000045);
-    font-family:"Nico-Moji";
+.wave-bouncing-loading-animation {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: min(60px, 6vw);
+  color: black;
+  -webkit-box-reflect: below -0.4em linear-gradient(transparent, #00000045);
+  font-family: "Nico-Moji";
 }
 .wave-bouncing-loading-animation > span {
-    display: inline-block;
-    font-weight: bolder;
-    animation: bouncing-wave-animation 2s infinite;
-    animation-delay: calc(.25s * var(--item));
+  display: inline-block;
+  font-weight: bolder;
+  animation: bouncing-wave-animation 2s infinite;
+  animation-delay: calc(0.25s * var(--item));
 }
 @keyframes bouncing-wave-animation {
-    0%, 40%, 100% {
-        transform: translateY(0);
-    }
-    20% {
-        transform: translateY(-0.4em);
-    }
+  0%,
+  40%,
+  100% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(-0.4em);
+  }
 }
 .App {
   padding: 50px 80px;
@@ -283,7 +285,6 @@ button {
   border-radius: 50px;
   transition: 300ms linear;
 }
-
 .toggle-btn label:before {
   position: absolute;
   top: 50%;
@@ -326,6 +327,9 @@ button {
   display: flex;
   left: 430px;
   top: 10px;
+  flex-direction: row;
+  gap: 30px;
+  align-items: center;
 }
 .user-content-container p {
   position: relative;
@@ -339,6 +343,16 @@ button {
   background-color: black;
   left: 345px;
   top: 40px;
+  overflow: auto;
+  direction: rtl;
+}
+.user-button-container {
+  display: flex;
+  flex-direction: row;
+  gap: 100px;
+  position: relative;
+  top: 35px;
+  left: 350px;
 }
 .share-btn {
   position: relative;
@@ -357,14 +371,15 @@ button {
   position: relative;
   right: 20px;
   width: fit-content;
+  z-index: 2;
 }
-.other-check-text-container{
+.other-check-text-container {
   display: flex;
-    flex-direction: row;
-    gap: 25px;
-    position: relative;
-    bottom: 55px;
-    align-items: center;
+  flex-direction: row;
+  gap: 25px;
+  position: relative;
+  bottom: 55px;
+  align-items: center;
 }
 .user-file-icon {
   position: absolute;
@@ -378,7 +393,149 @@ button {
   position: relative;
   bottom: 20px;
   right: 60px;
+  z-index: 2;
 }
 .other-content {
   left: 80px;
+}
+.card-user-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 80px;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  width: 95%;
+  top: 70px;
+  margin-bottom: 100px;
+}
+.card-user {
+  background-color: #212121;
+  color: white;
+  width: 350px;
+  height: 200px;
+  border-radius: 0px 80px 80px 80px;
+}
+.card-image {
+  position: absolute;
+}
+.card-content {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  bottom: 40px;
+}
+.card-image img {
+  position: relative;
+  width: 155px;
+  height: 160px;
+  left: 115%;
+  border-radius: 0px 80px 60px 35px;
+}
+.card-image {
+  position: absolute;
+  top: 40px;
+}
+.card-text {
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+  font-family: "Radiotehnika";
+  font-size: 25px;
+  font-weight: 600;
+}
+.card-header {
+  position: relative;
+  top: 25px;
+  left: 25px;
+}
+.card-description {
+  position: relative;
+  font-size: 46px;
+  top: 60px;
+  left: 60px;
+}
+.card-top {
+  position: relative;
+  width: 160px;
+  height: 40px;
+  background-color: #212121;
+  bottom: 35px;
+  border-radius: 25px 25px 0px 0px;
+}
+.all-header-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.file-list{
+  color:white;
+  display: flex;
+  flex-direction: column;
+  gap:10px;
+  padding: 20px;
+  direction: ltr;
+}
+.file-conteiner{
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
+}
+.file-buttons{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+}
+.file-buttons img{
+  width: 32px;
+  height: 32px;
+}
+input[type="checkbox"]{
+  width: 20px;
+  height: 20px;
+}
+.file-name{
+  width: fit-content;
+  height: auto;
+}
+.file-name:hover{
+  cursor: pointer;
+}
+.loader {
+  width: 15px;
+  padding: 8px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: white;
+  --_m:
+    conic-gradient(#0000 10%, #000),
+    linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+  mask: var(--_m);
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
+  animation: l3 1s infinite linear;
+}
+
+@keyframes l3 {
+  to {
+    transform: rotate(1turn)
+  }
+}
+.user-find{
+  position: relative;
+}
+.user-find input{
+  display: block;
+  background-color: transparent;
+  color: black;
+  border: 0;
+  border-bottom: 2px solid black; 
+  font-size: 26px;
+  padding: 10px 10px 10px 5px;
+  width: 300px;
+  outline: none;
 }

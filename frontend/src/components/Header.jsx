@@ -12,11 +12,16 @@ function Header(props) {
           <span>О НАС</span>
         </Link>
         {isLog ? (
-          <Link to={"/user/"+ store.user} className="header_login ">
-            <div className="header_login-text">
-              <span className="white-p">ЛИЧНЫЙ КАБИНЕТ</span>
-            </div>
-          </Link>
+          <>
+            <Link to="/user" className="header_item ">
+              <span>ПОЛЬЗОВАТЕЛИ</span>
+            </Link>
+            <Link to={"/user/" + store.user} className="header_login ">
+              <div className="header_login-text">
+                <span className="white-p">ЛИЧНЫЙ КАБИНЕТ</span>
+              </div>
+            </Link>
+          </>
         ) : (
           <>
             <Link to="/sing-in" className="header_item ">
